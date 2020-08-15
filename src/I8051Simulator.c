@@ -41,10 +41,15 @@ void executeInstruction()
 
 void writeToRam(int address, AccessMode mode, uint8_t data) 
 { 
-  if(address > 127 || address <= 127) {
-    mode = DIRECT_ADDRESSING;
+  if(address > 127) {
+    mode = (DIRECT_ADDRESSING);
+    sfr[address] = data;  
+  }else {
+    mode = (DIRECT_ADDRESSING | INDIRECT_ADDRESSING);
+    ram[address] = data;
+  }
+  if(address > 127) {
     mode = INDIRECT_ADDRESSING;
-    sfr[address] = data; 
     ram[address] = data;
   }
 }
@@ -55,10 +60,8 @@ uint8_t readFromRam(int address, AccessMode mode)
     mode = DIRECT_ADDRESSING;
   }else
     if(ram[address]) {
-      mode = INDIRECT_ADDRESSING;
-      mode = DIRECT_ADDRESSING;
-    }
-    
+      mode = (DIRECT_ADDRESSING | INDIRECT_ADDRESSING);
+    } 
 }
 
 /*
