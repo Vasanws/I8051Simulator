@@ -246,13 +246,13 @@ void test_mov_given_25H_expect_MOV_25H_from_R3_Bank2_to_acc(void)
 
 
 
-    uint8_t machineCode[] = {0xe8,0xeb};
+    uint8_t machineCode[] = {0xeb,0xe8, 0x13};
+
+
+
+    sfr[0xe0] = 0x25;
 
     ram[0x13] = 0x25;
-
-
-
-    sfr[0xe0] = 0x00;
 
 
 
@@ -260,7 +260,7 @@ void test_mov_given_25H_expect_MOV_25H_from_R3_Bank2_to_acc(void)
 
 
 
-    do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x1811]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+    do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x167A]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
 
 
 
@@ -280,7 +280,7 @@ void test_mov_given_25H_expect_MOV_25H_from_R3_Bank2_to_acc(void)
 
    ), (UNITY_UINT)(122), UNITY_DISPLAY_STYLE_INT);
 
-    UnityAssertEqualNumber((UNITY_INT64)((0x1811 + 1)), (UNITY_INT64)((pc)), (
+    UnityAssertEqualNumber((UNITY_INT64)((0x167A + 1)), (UNITY_INT64)((pc)), (
 
    ((void *)0)
 

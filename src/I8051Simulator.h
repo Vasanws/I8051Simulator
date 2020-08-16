@@ -24,8 +24,6 @@ typedef void(*ExecuteInstruction)(void);
 void writeToRam(int address, AccessMode mode, uint8_t data);
 uint8_t readFromRam(int address, AccessMode mode);
 
-
-
 void executeInstruction();
 void mov();
 

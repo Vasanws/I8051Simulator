@@ -107,20 +107,24 @@ void test_condition_for_address_0x38_read_mode_INDIRECT_ADDRESSING_of_RAM_expect
 void test_mov_given_25H_expect_MOV_25H_from_R3_Bank2_to_acc(void)
 { 
     //setup test fixture
-    uint8_t machineCode[] = {0xe8,0xeb};
-    ram[0x13] = 0x25;    //R3 of bank 2  0x30 = 48
+    uint8_t machineCode[] = {0xeb,0xe8, 0x13};
     //Acc empty 
-    acc = 0x00;   
-    //set psw 10 bit to 4&3
-    psw = 2 << 3;        //shift left 3 times    
+    acc = 0;
+    ram[0x13] = 0x25;     //assign val 25H to R3 bank 2, 25H = 37
+    //set psw 10 (Bank2) bits of D4 & D3
+    psw = 2 << 3;        //shift left 3 times          
     //codeMemory
-    copyCodeToCodeMemory(machineCode, pc = 0x1811);
+    copyCodeToCodeMemory(machineCode, pc = 0x167A);
     //run code under test
     executeInstruction();
     //code output test
-    TEST_ASSERT_EQUAL(0x25, acc);             //test acc value
-    TEST_ASSERT_EQUAL(0x25, ram[0x13]);       //test ram value
-    TEST_ASSERT_EQUAL_PTR(0x1811 + 1, pc);    //test program counter
+    TEST_ASSERT_EQUAL(0x25, acc);             //ceedling error at line 121 expected 37 was 0
+                                              //mov() function in the debugger shows the 1st if condition enter the 1st statement
+                                              //shows that acc = r(*codePtr & 7); (*codePtr & 7) in the watches shows the val is 3 int.
+                                              //to translate in simple C; acc = r(3);
+                                              //test fail where acc does not contains val 25H/37 as ASM MOV A,R3 even the test is set.
+    TEST_ASSERT_EQUAL(0x25, ram[0x13]);
+    TEST_ASSERT_EQUAL_PTR(0x167A + 1, pc);    //test program counter
 }
 
 /*void test_mov_given_22H_to_acc_expect_22H_direct_to_acc(void)
@@ -146,7 +150,7 @@ void test_mov_given_25H_expect_MOV_25H_from_R3_Bank2_to_acc(void)
 { 
 
     //setup test fixture
-    uint8_t machineCode[] = {0xe7};
+    uint8_t machineCode[] = {0xe6,0xe7};
     
     ram[0x93] = 0x21;    //assign val to R1 Bank 1 into ram pointer  0x21 = 33
     
@@ -163,7 +167,7 @@ void test_mov_given_25H_expect_MOV_25H_from_R3_Bank2_to_acc(void)
     copyCodeToCodeMemory(machineCode, pc = 0x1200);
     
     //run code under test
-    executeInstruction();
+    //executeInstruction();
 
     //code output test
     TEST_ASSERT_EQUAL(0x21, acc);             //test acc value

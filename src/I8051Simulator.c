@@ -86,7 +86,7 @@ if (codePtr & 8)
 void mov()
 {
   uint8_t *codePtr = &codeMemory[pc];
- 
+  
   if (codePtr[0] & (1 << 3) ) {
     acc = r(*codePtr & 7);
   }else {
