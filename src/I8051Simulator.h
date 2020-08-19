@@ -10,7 +10,7 @@ typedef enum {
 
 #define acc   sfr[0xe0]
 #define psw   sfr[0xd0]
-#define r(n)  ram[((psw >> 3) & 0x03) * 8 + n]
+#define r(n)  ram[((psw >> 3) & 0x03) * 8 + (n)]
 
      
 extern uint8_t ram[];
@@ -26,6 +26,12 @@ uint8_t readFromRam(int address, AccessMode mode);
 
 void executeInstruction();
 void mov();
+void movD();
+void movAddr();
+void clrA();
+void incA();
+void incR();
+void decA();
 
 #endif // I8051SIMULATOR_H
 

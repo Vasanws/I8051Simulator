@@ -5,10 +5,15 @@
 
 
 ExecuteInstruction I8051ExecutionTable[256] = {
-  [0x74] = mov,
+  [0x74] = movD,
   [0xe8] = mov, mov, mov, mov, mov, mov, mov,
   [0xe5] = mov,
   [0xe6] = mov, mov, 
+  [0xe4] = clrA,
+  [0x04] = incA, 
+  //[0x08] = incR, incR, incR, incR, incR, incR, incR, 
+  [0x14] = decA,
+  
 };
 
 int pc = 0;
@@ -35,7 +40,7 @@ uint8_t codeMemory[0x10000]; //64KB
 void executeInstruction()
 {
   uint8_t *codePtr = &codeMemory[pc];
-  ExecuteInstruction executor = I8051ExecutionTable[codePtr[1]];
+  ExecuteInstruction executor = I8051ExecutionTable[codePtr[0]];
   executor();
 }
 
@@ -87,16 +92,41 @@ void mov()
 {
   uint8_t *codePtr = &codeMemory[pc];
   
-  if (codePtr[0] & (1 << 3) ) {
+  if (codePtr[0] & (1 << 3)) {
     acc = r(*codePtr & 7);
-  }else {
+   }else {
     if (codePtr[0] & (1 << 1)) {
-      acc = readFromRam(codePtr[1], DIRECT_ADDRESSING);
+       acc = readFromRam(codePtr[1], DIRECT_ADDRESSING);
     }else {
-      acc = readFromRam(r(codePtr[0] & 1),INDIRECT_ADDRESSING);
+       acc = readFromRam(r(codePtr[0] & 1), INDIRECT_ADDRESSING); 
     } 
   }
   pc += 1;
+}
+void movD()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  acc = codePtr[1];
+  pc += 2;
+}
+void clrA() 
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  acc = 0;
+  pc += 1;
+}
+
+void incA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  acc += 1;
+  pc += 1; 
+}
+void decA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  acc -= 1;
+  pc += 1; 
 }
 
 

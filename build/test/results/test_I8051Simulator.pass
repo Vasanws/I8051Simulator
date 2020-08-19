@@ -1,0 +1,90 @@
+---
+:source:
+  :path: test
+  :file: test_I8051Simulator.c
+:successes:
+- :test: test_condition_for_address_0xfa_to_DIRECT_ADDRESSING_contains_data_0x76_expect_address_0xfa_points_to_data_0x76_at_SFR_DIRECT_ADDRESSING
+  :line: 14
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0xfd_to_DIRECT_ADDRESSING_contains_data_0x65_expect_address_0xfd_points_to_data_0x65_at_SFR_DIRECT_ADDRESSING
+  :line: 26
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0x9b_to_INDIRECT_ADDRESSING_contains_data_0x69_expect_address_0x9b_points_to_data_0x69_at_SRAM_INDIRECT_ADDRESSING
+  :line: 38
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0x85_to_INDIRECT_ADDRESSING_contains_data_0x88_expect_address_0x85_points_to_data_0x88_at_SRAM_INDIRECT_ADDRESSING
+  :line: 49
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0x11_to_DIRECT_ADDRESSING_contains_data_0x43_expect_address_0x11_points_to_data_0x43_at_RAM_DIRECT_ADDRESSING
+  :line: 61
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0x35_to_DIRECT_ADDRESSING_contains_data_0x78_expect_address_0x35_points_to_data_0x78_at_RAM_DIRECT_ADDRESSING
+  :line: 72
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0x7e_to_INDIRECT_ADDRESSING_contains_data_0x55_expect_address_0x7e_points_to_data_0x55_at_RAM_INDIRECT_ADDRESSING
+  :line: 83
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0x6a_to_INDIRECT_ADDRESSING_contains_data_0x9a_expect_address_0x6a_points_to_data_0x9a_at_RAM_INDIRECT_ADDRESSING
+  :line: 94
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0xff_read_mode_DIRECT_ADDRESSING_of_SFR_expect_to_read_address_0xff_from_SFR_DIRECT_ADDRESSING
+  :line: 107
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0x88_read_mode_INDIRECT_ADDRESSING_of_SRAM_expect_to_read_address_0x88_from_SRAM_INDIRECT_ADDRESSING
+  :line: 119
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0x42_read_mode_DIRECT_ADDRESSING_of_RAM_expect_to_read_address_0x42_from_RAM_DIRECT_ADDRESSING
+  :line: 131
+  :message: ''
+  :unity_test_time: 0
+- :test: test_condition_for_address_0x38_read_mode_INDIRECT_ADDRESSING_of_RAM_expect_to_read_address_0x38_from_RAM_INDIRECT_ADDRESSING
+  :line: 142
+  :message: ''
+  :unity_test_time: 0
+- :test: test_R3_access_given_register_select_bank2_expect_access_address_0x13_of_bank2
+  :line: 155
+  :message: ''
+  :unity_test_time: 0
+- :test: test_R6_access_given_register_select_bank3_expect_access_address_0x1e_of_bank3
+  :line: 174
+  :message: ''
+  :unity_test_time: 0
+- :test: test_mov_given_25H_expect_MOV_25H_from_R3_Bank2_to_acc
+  :line: 196
+  :message: ''
+  :unity_test_time: 0
+- :test: test_mov_given_22H_to_acc_expect_22H_direct_to_acc
+  :line: 244
+  :message: ''
+  :unity_test_time: 0
+- :test: test_given_value_22H_to_acc_expect_CLR_value_in_acc
+  :line: 260
+  :message: ''
+  :unity_test_time: 0
+- :test: test_given_value_to_acc_value_7CH_expect_value_to_increment_plus1_to_7DH
+  :line: 276
+  :message: ''
+  :unity_test_time: 0
+- :test: test_given_value_to_acc_value_65H_expect_value_to_decrement_MINUS1_to_64H
+  :line: 293
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 19
+  :passed: 19
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.024685399999725632
