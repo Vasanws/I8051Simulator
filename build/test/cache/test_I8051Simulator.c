@@ -748,7 +748,7 @@ void test_mov_address_of_10H_A_expect_value_of_A_54H_direct_to_address_10H(void)
 
 
 
-    uint8_t machineCode[] = {0xf5,0x54};
+    uint8_t machineCode[] = {0xf5,0x10};
 
 
 

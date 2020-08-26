@@ -144,9 +144,10 @@ void movDataToReg()
 void movAccToDir()
 {
   uint8_t *codePtr = &codeMemory[pc];   //*codePtr contains the code 0xf5
-  int directData = readFromMemory(codePtr[1], DIRECT_ADDRESSING); //codePtr[1] contains the value 0x54(84) and read 
+  int directData = readFromMemory(codePtr[1], DIRECT_ADDRESSING); //codePtr[1] contains the ram[0x10] and read 
                                                                   //DIRECT_ADDRESSING
   directData = acc;
+  //codePtr[1] = acc;
   pc += 2;
 }
 void clrA() 
