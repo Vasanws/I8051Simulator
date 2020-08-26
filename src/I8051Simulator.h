@@ -21,17 +21,25 @@ extern int pc;
 
 typedef void(*ExecuteInstruction)(void);
 
-void writeToRam(int address, AccessMode mode, uint8_t data);
-uint8_t readFromRam(int address, AccessMode mode);
+void writeToMemory(int address, AccessMode mode, uint8_t data);
+uint8_t readFromMemory(int address, AccessMode mode);
 
 void executeInstruction();
 void mov();
-void movD();
+void movImmediateDataToAcc();
+void movAccToReg();
+void movDirToReg();
+void movDataToReg();
+void movAccToDir();
 void movAddr();
 void clrA();
 void incA();
 void incR();
 void decA();
+void nop();
+void swapA();
+void cplA();
+
 
 #endif // I8051SIMULATOR_H
 
