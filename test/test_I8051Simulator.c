@@ -294,22 +294,152 @@ void test_mov_R6_hash77H_expect_hash77H_to_R6(void)
     TEST_ASSERT_EQUAL_PTR(0x66A + 2, pc);     //test program counter
 }
 
-// MOV 10H,A 
-void test_mov_address_of_10H_A_expect_value_of_A_54H_direct_to_address_10H(void)
+// MOV 12H,A 
+void test_mov_12H_A_expect_value_of_A_hash54H_direct_to_location_12H(void)
 { 
     //test setup fixture
-    uint8_t machineCode[] = {0xf5,0x10};
-    //set acc empty
+    uint8_t machineCode[] = {0xf5,0x12};
+    //assign value to acc 
     acc = 0x54;
-    //direct RAM address
-    ram[0x10] = 0;
-    //copyMemory
-    copyCodeToCodeMemory(machineCode, pc = 0x66A);
+    //setup ram location
+    ram[0x12] = 0;
+    //copy code 
+    copyCodeToCodeMemory(machineCode, pc = 0x2222);
+    //run  code under test 
+    executeInstruction();
+    //code output test
+    TEST_ASSERT_EQUAL(0x54, acc);
+    TEST_ASSERT_EQUAL(0x54, ram[0x12]);
+    TEST_ASSERT_EQUAL_PTR(0x2222 + 2, pc);
+}
+
+// MOV 11H, R5
+void test_mov_11H_R5_expect_R5_move_to_location_11H(void)
+{
+  //test setup fixture 
+   uint8_t machineCode[] = {0x8d,0x11};
+   //setup acc to 0 
+   acc = 0;
+   //select bank for R5 
+   psw = 1 << 3;
+   //assign value in R5
+   ram[0x0d] = 0x66;
+   //copy code 
+   copyCodeToCodeMemory(machineCode, pc = 0x2234);
+   //run code under test 
+   executeInstruction();
+   //code output test 
+   TEST_ASSERT_EQUAL(0, acc);
+   TEST_ASSERT_EQUAL(0x66, ram[0x0d]);
+   TEST_ASSERT_EQUAL(0x66, ram[0x11]);
+   TEST_ASSERT_EQUAL_PTR(0x2234 + 2, pc);
+}
+
+// MOV 18H,1AH
+void test_mov_18H_1AH_expect_location_of_1AH_move_to_location_18H(void)
+{
+  //test setup fixture 
+  uint8_t machineCode[] = {0x85, 0x1a, 0x18};
+  //setup acc to 0 
+  acc = 0;
+  //setup data into location 1AH
+  ram[0x1a] = 0x56;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x2534);
+  //run code under test 
+  executeInstruction();
+  //code output test 
+  TEST_ASSERT_EQUAL(0, acc);
+  TEST_ASSERT_EQUAL(0x56, ram[0x18]);
+  TEST_ASSERT_EQUAL_PTR(0x2534 + 2, pc);  
+}
+
+// MOV 1BH,@R1
+void test_mov_1BH_addressR1_expect_addressR1_mov_to_location_1BH(void)
+{
+    //setup test fixture
+    uint8_t machineCode[] = {0x87,0x1b}; //@R1
+    //acc is 0 
+    acc = 0;  
+    //assign val 0x22(34) to RAM location
+    ram[0x87] = 0x22;
+    sfr[0x87] = 0;
+    //set psw 01 (Bank1) bit to 4&3
+    psw = 1 << 3;        
+    //test setup calling the address 
+    r(1) = 0x87;
+    //codeMemory
+    copyCodeToCodeMemory(machineCode, pc = 0x1299);
     //run code under test
     executeInstruction();
     //code output test
-    TEST_ASSERT_EQUAL(0x54, ram[0x10]);       //test fail "Expected 84 was 0"
-    TEST_ASSERT_EQUAL_PTR(0x66A + 2, pc);     //test program counter
+    TEST_ASSERT_EQUAL(0, acc);
+    TEST_ASSERT_EQUAL(0x87, r(1));
+    TEST_ASSERT_EQUAL_PTR(0x1299 + 2, pc);   
+}
+
+// MOV 10H,#91
+void test_mov_10H_hash91_expect_hash91_move_to_location_10H(void)
+{
+  //test setup fixture 
+  uint8_t machineCode[] = {0x75, 0x10, 0x91};
+  //setup acc to 0 
+  acc = 0;
+  //setup data into location 1AH
+  ram[0x10] = 0x91;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x2034);
+  //run code under test 
+  executeInstruction();
+  //code output test 
+  TEST_ASSERT_EQUAL(0, acc);
+  TEST_ASSERT_EQUAL(0x91, ram[0x10]);
+  TEST_ASSERT_EQUAL_PTR(0x2034 + 2, pc); 
+}
+
+// MOV @R1,A
+/*void test_mov_addressR1_Acc_expect_Acc_mov_to_addressR1(void)
+{
+    //setup test fixture
+    uint8_t machineCode[] = {0xf7}; //@R1
+    //assign value 77H to acc
+    acc = 0x77;  
+    //RAM location
+    ram[0x91] = 0;
+    sfr[0x91] = 0;
+    //set psw 00 (Bank0) bit to 4&3
+    psw = 0 << 3;        
+    //test setup calling the address 
+    r(1) = 0x91;
+    //codeMemory
+    copyCodeToCodeMemory(machineCode, pc = 0x1499);
+    //run code under test
+    executeInstruction();
+    //code output test
+    TEST_ASSERT_EQUAL(0x77, acc);
+    TEST_ASSERT_EQUAL(0x77, r(1));
+    TEST_ASSERT_EQUAL_PTR(0x1499 + 1, pc);   
+}*/
+
+// MOV DPTR, #1234H
+void test_MOV_DPTR_hash1234_given_hash1234_expect_DPH_hold_hash12H_DPL_hold_hash34H()
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x90, 0x12, 0x34};
+  //acc to 0 
+  acc = 0;
+  //set DPH and DPL to 0 
+  DPH = 0;
+  DPL = 0;
+  //codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x987);
+  //run code under test 
+  executeInstruction();
+  //code output test 
+  TEST_ASSERT_EQUAL_INT8(0x12, DPH);
+  TEST_ASSERT_EQUAL_INT8(0x34, DPL);
+  TEST_ASSERT_EQUAL_PTR(0, acc);
+  TEST_ASSERT_EQUAL_PTR(0x987 + 3, pc);
 }
 // CLR A
 void test_given_value_22H_to_acc_expect_CLR_value_in_acc(void)
@@ -343,6 +473,70 @@ void test_given_value_to_acc_value_7CH_expect_value_to_increment_plus1_to_7DH(vo
   TEST_ASSERT_EQUAL_PTR(0x999 + 1, pc);
 }
 
+// INC R6
+void test_INC_R6_expected_value_in_R6_inc(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x0e};
+  //acc setup 
+  acc = 0;
+  //set psw 11 (bank3) bits D4 & D3 
+  psw = 3 << 3;
+  //R6
+  ram[0x1e] = 0x45;
+  //copyCode 
+  copyCodeToCodeMemory(machineCode, pc = 0x7806);
+  //run code under test 
+  executeInstruction();
+  //code output test
+  TEST_ASSERT_EQUAL(0, acc);
+  TEST_ASSERT_EQUAL(0x46, ram[0x1e]);
+  TEST_ASSERT_EQUAL_PTR(0x7806 + 1, pc);
+}
+
+// INC 17H
+void test_INC_17H_expected_hash45_increment_to_hash46_in_location_17H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x05, 0x17};
+  //acc setup 
+  acc = 0;
+  //set up direct ram 
+  ram[0x17] = 0x45;
+  //copyCode 
+  copyCodeToCodeMemory(machineCode, pc = 0x7816);
+  //run code under test 
+  executeInstruction();
+  //code output test
+  TEST_ASSERT_EQUAL(0, acc);
+  TEST_ASSERT_EQUAL(0x46, ram[0x17]);
+  TEST_ASSERT_EQUAL_PTR(0x7816 + 2, pc);
+}
+
+// INC @R1
+/*void test_inc_addressR1_expect_value_in_addressR1_plus1(void)
+{
+  //setup test fixture
+   uint8_t machineCode[] = {0x07}; //@R1
+  //assign value 77H to acc
+  acc = 0;  
+  //RAM location
+  ram[0x88] = 0x67;
+  sfr[0x88] = 0;
+  //set psw 01 (Bank1) bit to 4&3
+  psw = 1 << 3;        
+  //test setup calling the address 
+  r(1) = 0x88;
+  //codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x7826);
+  //run code under test
+  executeInstruction();
+  //code output test
+  TEST_ASSERT_EQUAL(0, acc);
+  TEST_ASSERT_EQUAL(0x68, r(1));
+  TEST_ASSERT_EQUAL_PTR(0x7826 + 1, pc); 
+}*/
+
 // DEC A
 void test_given_value_to_acc_value_65H_expect_value_to_decrement_MINUS1_to_64H(void)
 {
@@ -359,46 +553,44 @@ void test_given_value_to_acc_value_65H_expect_value_to_decrement_MINUS1_to_64H(v
   TEST_ASSERT_EQUAL_PTR(0x799 + 1, pc);
 }
 
-// INC R6
-void test_given_value_45H_to_R6_bank3_expect_value_to_increment_to_46H_in_R6(void)
+// DEC R5
+void test_DEC_R5_expected_value_in_R5_decrement(void)
 {
   //test setup fixture
-  uint8_t machineCode[] = {0x0e};
+  uint8_t machineCode[] = {0x1d};
   //acc setup 
   acc = 0;
-  //set psw 11 (bank3) bits D4 & D3 
-  psw = 3 << 3;
-  //assign value to R6 
-  ram[0x1e] = 0x45;
+  //set psw 10 (bank2) bits D4 & D3 
+  psw = 2 << 3;
+  //R6
+  ram[0x15] = 0x55;
   //copyCode 
-  copyCodeToCodeMemory(machineCode, pc = 0x7806);
+  copyCodeToCodeMemory(machineCode, pc = 0x0789);
   //run code under test 
   executeInstruction();
   //code output test
   TEST_ASSERT_EQUAL(0, acc);
-  TEST_ASSERT_EQUAL(0x46, ram[0x1e]);
-  TEST_ASSERT_EQUAL_PTR(0x7806 + 1, pc);
+  TEST_ASSERT_EQUAL(0x54, ram[0x15]);
+  TEST_ASSERT_EQUAL_PTR(0x0789 + 1, pc);
 }
 
-// INC R5
-void test_given_value_66H_to_R5_bank1_expect_value_to_increment_to_67H_in_R5(void)
+// DEC 16H
+void test_INC_16H_expected_hash44_decrement_to_hash43_in_location_16H(void)
 {
   //test setup fixture
-  uint8_t machineCode[] = {0x0d};
+  uint8_t machineCode[] = {0x15, 0x16};
   //acc setup 
   acc = 0;
-  //set psw 01 (bank3) bits D4 & D3 
-  psw = 1 << 3;
-  //assign value to R5 
-  ram[0x0d] = 0x66;
+  //set up direct ram 
+  ram[0x16] = 0x44;
   //copyCode 
-  copyCodeToCodeMemory(machineCode, pc = 0x7817);
+  copyCodeToCodeMemory(machineCode, pc = 0x7811);
   //run code under test 
   executeInstruction();
   //code output test
   TEST_ASSERT_EQUAL(0, acc);
-  TEST_ASSERT_EQUAL(0x67, ram[0x0d]);
-  TEST_ASSERT_EQUAL_PTR(0x7817 + 1, pc);
+  TEST_ASSERT_EQUAL(0x43, ram[0x16]);
+  TEST_ASSERT_EQUAL_PTR(0x7811 + 2, pc);
 }
 
 // NOP
@@ -458,10 +650,216 @@ void test_given_value_23H_to_acc_expect_23H_complement_become_DCH_in_acc(void)
   TEST_ASSERT_EQUAL_PTR(0x222 + 1, pc);
 }
 
+// XRL A,R2
+void test_XRL_Acc_R2_expect_R2_XRL_Acc(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x6a};
+  //assign acc a value 
+  acc = 0x24;
+  //set R2 10(bank2) bitwise D3 & D4 
+  psw = 2 << 3;
+  //assign value in R2 
+  ram[0x12] = 0x15;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x111);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0x31, acc);
+  TEST_ASSERT_EQUAL_PTR(0x111 + 1, pc);
+}
 
-  
+// ADD A,R3 
+void test_add_Acc_R3_expect_R3_value_add_to_Acc(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x2b};
+  //assign value to acc 7EH = 126
+  acc = 126;
+  //select bank2 R3 
+  psw = 2 << 3;
+  //set OV to 0 
+  status.OV = 0;
+  //assign value to R3 4H = 4
+  ram[0x13] = 4;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x123);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_INT8(130, acc);      //7EH + 4H = 82H
+                                     //82H => 130
+                                     //2's complement => -126
+  TEST_ASSERT_EQUAL(1, status.OV);
+  TEST_ASSERT_EQUAL_PTR(0x123 + 1, pc);
+}
+
+// ADD A,14H 
+void test_ADD_A_14H_given_A_plus126_and_14H_plus1_expect_14H_value_add_to_Acc_value_plus127(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x25, 0x14};
+  //assign value to acc 126
+  acc = 126;
+  //set OV to 0 
+  status.OV = 1;
+  //assign value to R3 4H = 4
+  ram[0x14] = 1;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x124);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_INT8(127, acc);      
+  TEST_ASSERT_EQUAL(0, status.OV);
+  TEST_ASSERT_EQUAL_PTR(0x124 + 2, pc);
+}
+
+// ADD A,85
+void test_ADD_A_hash55_given_A_plus126_and_85_expect_85_add_Acc_value_181_with_overflow(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x24, 85};
+  //assign value to acc 126
+  acc = 126;
+  //set OV to 0 
+  status.OV = 0;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x125);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_INT8(211, acc);      
+  TEST_ASSERT_EQUAL(1, status.OV);
+  TEST_ASSERT_EQUAL_PTR(0x125 + 2, pc);
+}
+
+/* A = -127-0-(-3) = -124
+// 127 => 0111 1111
+//        1000 0000
+//               +1
+//-----------------
+//        1000 0001  
+// 3 => 0000 0011
+//      1111 1100
+//             +1
+//---------------
+//      1111 1101 
+// 
+//      1000 0001
+//    - 1111 1101
+//---------------
+//      1000 0100 
+//      0111 1011
+//             +1
+//----------------
+//      0111 1111
+*/
+// SUBB A, R2 
+void test_SUBB_A_R2_expect_R2_value_minus_to_Acc(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x9a};
+  //assign value to acc
+  acc = -127;
+  //select bank2 R2 
+  psw = 2 << 3;
+  //CY is 0 
+  status.CY = 0;
+  //set OV to 1 
+  status.OV = 1;
+  //assign value to R3 4H = 4
+  ram[0x12] = -3;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x130);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_INT8(-124, acc);  // -124 (-7C)    
+  TEST_ASSERT_EQUAL(0, status.OV);
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x130 + 1, pc);
+}
 
 
+// A = -110-(1+41) = -151
+/* 110 => 0110 1110
+     1's  1001 0001
+        +         1 (2's)
+      -------------
+          1001 0010
+*/
+// SUBB A, R2 
+void test_SUBB_A_R2_given_A_minus110_R2_40_CY_1_expect_minus151_in_Acc(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x9a};
+  //assign value to acc
+  acc = -110;
+  //select bank2 R2 
+  psw = 2 << 3;
+  //CY is 1
+  status.CY = 1;
+  //set OV to 0 
+  status.OV = 0;
+  //assign value to R3 4H = 4
+  ram[0x12] = 40;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x131);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_INT8(-151, acc);      
+  TEST_ASSERT_EQUAL(1, status.OV);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x131 + 1, pc);
+}
 
+// SUBB A,15H  
+void test_SUBB_A_15H_given_A_minus90_location_15H_30_CY_1_expect_minus121_in_Acc(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x95, 0x15};
+  //assign value to acc
+  acc = -90;
+  //CY is 1
+  status.CY = 1;
+  //set OV to 0 
+  status.OV = 1;
+  //assign value location 15H
+  ram[0x15] = 30;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x132);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_INT8(-121, acc);      
+  TEST_ASSERT_EQUAL(0, status.OV);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x132 + 2, pc);
+}
+
+// SUBB A,21
+void test_SUBB_A_given_A_119_minus_21_CY_1_OV_1_expect_98_in_Acc(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x94, 21};
+  //assign value to acc
+  acc = 119;
+  //CY is 1
+  status.CY = 1;
+  //set OV to 0 
+  status.OV = 1;
+  //copy code 
+  copyCodeToCodeMemory(machineCode, pc = 0x133);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_INT8(98, acc);      
+  TEST_ASSERT_EQUAL(0, status.OV);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x133 + 2, pc);
+}
 
 

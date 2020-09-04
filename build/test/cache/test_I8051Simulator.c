@@ -742,13 +742,13 @@ void test_mov_R6_hash77H_expect_hash77H_to_R6(void)
 
 
 
-void test_mov_address_of_10H_A_expect_value_of_A_54H_direct_to_address_10H(void)
+void test_mov_12H_A_expect_value_of_A_hash54H_direct_to_location_12H(void)
 
 {
 
 
 
-    uint8_t machineCode[] = {0xf5,0x10};
+    uint8_t machineCode[] = {0xf5,0x12};
 
 
 
@@ -756,11 +756,11 @@ void test_mov_address_of_10H_A_expect_value_of_A_54H_direct_to_address_10H(void)
 
 
 
-    ram[0x10] = 0;
+    ram[0x12] = 0;
 
 
 
-    do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x66A]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+    do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x2222]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
 
 
 
@@ -768,17 +768,297 @@ void test_mov_address_of_10H_A_expect_value_of_A_54H_direct_to_address_10H(void)
 
 
 
-    UnityAssertEqualNumber((UNITY_INT)((0x54)), (UNITY_INT)((ram[0x10])), (
+    UnityAssertEqualNumber((UNITY_INT)((0x54)), (UNITY_INT)((sfr[0xe0])), (
 
    ((void *)0)
 
    ), (UNITY_UINT)(311), UNITY_DISPLAY_STYLE_INT);
 
-    UnityAssertEqualNumber((UNITY_INT64)((0x66A + 2)), (UNITY_INT64)((pc)), (
+    UnityAssertEqualNumber((UNITY_INT)((0x54)), (UNITY_INT)((ram[0x12])), (
 
    ((void *)0)
 
-   ), (UNITY_UINT)(312), UNITY_DISPLAY_STYLE_HEX64);
+   ), (UNITY_UINT)(312), UNITY_DISPLAY_STYLE_INT);
+
+    UnityAssertEqualNumber((UNITY_INT64)((0x2222 + 2)), (UNITY_INT64)((pc)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(313), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_mov_11H_R5_expect_R5_move_to_location_11H(void)
+
+{
+
+
+
+   uint8_t machineCode[] = {0x8d,0x11};
+
+
+
+   sfr[0xe0] = 0;
+
+
+
+   sfr[0xd0] = 1 << 3;
+
+
+
+   ram[0x0d] = 0x66;
+
+
+
+   do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x2234]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+   executeInstruction();
+
+
+
+   UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)((sfr[0xe0])), (
+
+  ((void *)0)
+
+  ), (UNITY_UINT)(332), UNITY_DISPLAY_STYLE_INT);
+
+   UnityAssertEqualNumber((UNITY_INT)((0x66)), (UNITY_INT)((ram[0x0d])), (
+
+  ((void *)0)
+
+  ), (UNITY_UINT)(333), UNITY_DISPLAY_STYLE_INT);
+
+   UnityAssertEqualNumber((UNITY_INT)((0x66)), (UNITY_INT)((ram[0x11])), (
+
+  ((void *)0)
+
+  ), (UNITY_UINT)(334), UNITY_DISPLAY_STYLE_INT);
+
+   UnityAssertEqualNumber((UNITY_INT64)((0x2234 + 2)), (UNITY_INT64)((pc)), (
+
+  ((void *)0)
+
+  ), (UNITY_UINT)(335), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_mov_18H_1AH_expect_location_of_1AH_move_to_location_18H(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x85, 0x1a, 0x18};
+
+
+
+  sfr[0xe0] = 0;
+
+
+
+  ram[0x1a] = 0x56;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x2534]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(352), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT)((0x56)), (UNITY_INT)((ram[0x18])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(353), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x2534 + 2)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(354), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_mov_1BH_addressR1_expect_addressR1_mov_to_location_1BH(void)
+
+{
+
+
+
+    uint8_t machineCode[] = {0x87,0x1b};
+
+
+
+    sfr[0xe0] = 0;
+
+
+
+    ram[0x87] = 0x22;
+
+    sfr[0x87] = 0;
+
+
+
+    sfr[0xd0] = 1 << 3;
+
+
+
+    ram[((sfr[0xd0] >> 3) & 0x03) * 8 + (1)] = 0x87;
+
+
+
+    do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x1299]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+    executeInstruction();
+
+
+
+    UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)((sfr[0xe0])), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(376), UNITY_DISPLAY_STYLE_INT);
+
+    UnityAssertEqualNumber((UNITY_INT)((0x87)), (UNITY_INT)((ram[((sfr[0xd0] >> 3) & 0x03) * 8 + (1)])), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(377), UNITY_DISPLAY_STYLE_INT);
+
+    UnityAssertEqualNumber((UNITY_INT64)((0x1299 + 2)), (UNITY_INT64)((pc)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(378), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_mov_10H_hash91_expect_hash91_move_to_location_10H(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x75, 0x10, 0x91};
+
+
+
+  sfr[0xe0] = 0;
+
+
+
+  ram[0x10] = 0x91;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x2034]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(395), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT)((0x91)), (UNITY_INT)((ram[0x10])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(396), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x2034 + 2)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(397), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+void test_MOV_DPTR_hash1234_given_hash1234_expect_DPH_hold_hash12H_DPL_hold_hash34H()
+
+{
+
+
+
+  uint8_t machineCode[] = {0x90, 0x12, 0x34};
+
+
+
+  sfr[0xe0] = 0;
+
+
+
+  sfr[0x83] = 0;
+
+  sfr[0x82] = 0;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x987]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((0x12)), (UNITY_INT)(UNITY_INT8 )((sfr[0x83])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(439), UNITY_DISPLAY_STYLE_INT8);
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((0x34)), (UNITY_INT)(UNITY_INT8 )((sfr[0x82])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(440), UNITY_DISPLAY_STYLE_INT8);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0)), (UNITY_INT64)((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(441), UNITY_DISPLAY_STYLE_HEX64);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x987 + 3)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(442), UNITY_DISPLAY_STYLE_HEX64);
 
 }
 
@@ -810,13 +1090,13 @@ void test_given_value_22H_to_acc_expect_CLR_value_in_acc(void)
 
  ((void *)0)
 
- ), (UNITY_UINT)(326), UNITY_DISPLAY_STYLE_INT);
+ ), (UNITY_UINT)(456), UNITY_DISPLAY_STYLE_INT);
 
   UnityAssertEqualNumber((UNITY_INT64)((0x0980 + 1)), (UNITY_INT64)((pc)), (
 
  ((void *)0)
 
- ), (UNITY_UINT)(327), UNITY_DISPLAY_STYLE_HEX64);
+ ), (UNITY_UINT)(457), UNITY_DISPLAY_STYLE_HEX64);
 
 }
 
@@ -850,13 +1130,13 @@ void test_given_value_to_acc_value_7CH_expect_value_to_increment_plus1_to_7DH(vo
 
  ((void *)0)
 
- ), (UNITY_UINT)(342), UNITY_DISPLAY_STYLE_INT);
+ ), (UNITY_UINT)(472), UNITY_DISPLAY_STYLE_INT);
 
   UnityAssertEqualNumber((UNITY_INT64)((0x999 + 1)), (UNITY_INT64)((pc)), (
 
  ((void *)0)
 
- ), (UNITY_UINT)(343), UNITY_DISPLAY_STYLE_HEX64);
+ ), (UNITY_UINT)(473), UNITY_DISPLAY_STYLE_HEX64);
 
 }
 
@@ -864,47 +1144,7 @@ void test_given_value_to_acc_value_7CH_expect_value_to_increment_plus1_to_7DH(vo
 
 
 
-void test_given_value_to_acc_value_65H_expect_value_to_decrement_MINUS1_to_64H(void)
-
-{
-
-
-
-  uint8_t machineCode[] = {0x14};
-
-
-
-  sfr[0xe0] = 0x65;
-
-
-
-  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x0799]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
-
-
-
-  executeInstruction();
-
-
-
-  UnityAssertEqualNumber((UNITY_INT)((0x64)), (UNITY_INT)((sfr[0xe0])), (
-
- ((void *)0)
-
- ), (UNITY_UINT)(358), UNITY_DISPLAY_STYLE_INT);
-
-  UnityAssertEqualNumber((UNITY_INT64)((0x799 + 1)), (UNITY_INT64)((pc)), (
-
- ((void *)0)
-
- ), (UNITY_UINT)(359), UNITY_DISPLAY_STYLE_HEX64);
-
-}
-
-
-
-
-
-void test_given_value_45H_to_R6_bank3_expect_value_to_increment_to_46H_in_R6(void)
+void test_INC_R6_expected_value_in_R6_inc(void)
 
 {
 
@@ -938,19 +1178,19 @@ void test_given_value_45H_to_R6_bank3_expect_value_to_increment_to_46H_in_R6(voi
 
  ((void *)0)
 
- ), (UNITY_UINT)(378), UNITY_DISPLAY_STYLE_INT);
+ ), (UNITY_UINT)(492), UNITY_DISPLAY_STYLE_INT);
 
   UnityAssertEqualNumber((UNITY_INT)((0x46)), (UNITY_INT)((ram[0x1e])), (
 
  ((void *)0)
 
- ), (UNITY_UINT)(379), UNITY_DISPLAY_STYLE_INT);
+ ), (UNITY_UINT)(493), UNITY_DISPLAY_STYLE_INT);
 
   UnityAssertEqualNumber((UNITY_INT64)((0x7806 + 1)), (UNITY_INT64)((pc)), (
 
  ((void *)0)
 
- ), (UNITY_UINT)(380), UNITY_DISPLAY_STYLE_HEX64);
+ ), (UNITY_UINT)(494), UNITY_DISPLAY_STYLE_HEX64);
 
 }
 
@@ -958,13 +1198,13 @@ void test_given_value_45H_to_R6_bank3_expect_value_to_increment_to_46H_in_R6(voi
 
 
 
-void test_given_value_66H_to_R5_bank1_expect_value_to_increment_to_67H_in_R5(void)
+void test_INC_17H_expected_hash45_increment_to_hash46_in_location_17H(void)
 
 {
 
 
 
-  uint8_t machineCode[] = {0x0d};
+  uint8_t machineCode[] = {0x05, 0x17};
 
 
 
@@ -972,15 +1212,11 @@ void test_given_value_66H_to_R5_bank1_expect_value_to_increment_to_67H_in_R5(voi
 
 
 
-  sfr[0xd0] = 1 << 3;
+  ram[0x17] = 0x45;
 
 
 
-  ram[0x0d] = 0x66;
-
-
-
-  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x7817]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x7816]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
 
 
 
@@ -992,19 +1228,159 @@ void test_given_value_66H_to_R5_bank1_expect_value_to_increment_to_67H_in_R5(voi
 
  ((void *)0)
 
- ), (UNITY_UINT)(399), UNITY_DISPLAY_STYLE_INT);
+ ), (UNITY_UINT)(511), UNITY_DISPLAY_STYLE_INT);
 
-  UnityAssertEqualNumber((UNITY_INT)((0x67)), (UNITY_INT)((ram[0x0d])), (
-
- ((void *)0)
-
- ), (UNITY_UINT)(400), UNITY_DISPLAY_STYLE_INT);
-
-  UnityAssertEqualNumber((UNITY_INT64)((0x7817 + 1)), (UNITY_INT64)((pc)), (
+  UnityAssertEqualNumber((UNITY_INT)((0x46)), (UNITY_INT)((ram[0x17])), (
 
  ((void *)0)
 
- ), (UNITY_UINT)(401), UNITY_DISPLAY_STYLE_HEX64);
+ ), (UNITY_UINT)(512), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x7816 + 2)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(513), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+void test_given_value_to_acc_value_65H_expect_value_to_decrement_MINUS1_to_64H(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x14};
+
+
+
+  sfr[0xe0] = 0x65;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x0799]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)((0x64)), (UNITY_INT)((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(552), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x799 + 1)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(553), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_DEC_R5_expected_value_in_R5_decrement(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x1d};
+
+
+
+  sfr[0xe0] = 0;
+
+
+
+  sfr[0xd0] = 2 << 3;
+
+
+
+  ram[0x15] = 0x55;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x0789]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(572), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT)((0x54)), (UNITY_INT)((ram[0x15])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(573), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x0789 + 1)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(574), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_INC_16H_expected_hash44_decrement_to_hash43_in_location_16H(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x15, 0x16};
+
+
+
+  sfr[0xe0] = 0;
+
+
+
+  ram[0x16] = 0x44;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x7811]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(591), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT)((0x43)), (UNITY_INT)((ram[0x16])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(592), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x7811 + 2)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(593), UNITY_DISPLAY_STYLE_HEX64);
 
 }
 
@@ -1038,13 +1414,13 @@ void test_NOP_to_skip_expect_NOP_to_skip_or_do_(void)
 
  ((void *)0)
 
- ), (UNITY_UINT)(416), UNITY_DISPLAY_STYLE_INT);
+ ), (UNITY_UINT)(608), UNITY_DISPLAY_STYLE_INT);
 
   UnityAssertEqualNumber((UNITY_INT64)((0x567 + 1)), (UNITY_INT64)((pc)), (
 
  ((void *)0)
 
- ), (UNITY_UINT)(417), UNITY_DISPLAY_STYLE_HEX64);
+ ), (UNITY_UINT)(609), UNITY_DISPLAY_STYLE_HEX64);
 
 }
 
@@ -1078,13 +1454,13 @@ void test_SWAP_A_give_value_6BH_expect_SWAP_A_B6H_in_acc(void)
 
  ((void *)0)
 
- ), (UNITY_UINT)(432), UNITY_DISPLAY_STYLE_INT);
+ ), (UNITY_UINT)(624), UNITY_DISPLAY_STYLE_INT);
 
   UnityAssertEqualNumber((UNITY_INT64)((0x324 + 1)), (UNITY_INT64)((pc)), (
 
  ((void *)0)
 
- ), (UNITY_UINT)(433), UNITY_DISPLAY_STYLE_HEX64);
+ ), (UNITY_UINT)(625), UNITY_DISPLAY_STYLE_HEX64);
 
 }
 
@@ -1114,12 +1490,478 @@ void test_given_value_23H_to_acc_expect_23H_complement_become_DCH_in_acc(void)
 
  ((void *)0)
 
- ), (UNITY_UINT)(457), UNITY_DISPLAY_STYLE_INT);
+ ), (UNITY_UINT)(649), UNITY_DISPLAY_STYLE_INT);
 
   UnityAssertEqualNumber((UNITY_INT64)((0x222 + 1)), (UNITY_INT64)((pc)), (
 
  ((void *)0)
 
- ), (UNITY_UINT)(458), UNITY_DISPLAY_STYLE_HEX64);
+ ), (UNITY_UINT)(650), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_XRL_Acc_R2_expect_R2_XRL_Acc(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x6a};
+
+
+
+  sfr[0xe0] = 0x24;
+
+
+
+  sfr[0xd0] = 2 << 3;
+
+
+
+  ram[0x12] = 0x15;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x111]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)((0x31)), (UNITY_INT)((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(669), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x111 + 1)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(670), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_add_Acc_R3_expect_R3_value_add_to_Acc(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x2b};
+
+
+
+  sfr[0xe0] = 126;
+
+
+
+  sfr[0xd0] = 2 << 3;
+
+
+
+  (*(Status*)&sfr[0xd0]).OV = 0;
+
+
+
+  ram[0x13] = 4;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x123]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((130)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(691), UNITY_DISPLAY_STYLE_INT8);
+
+
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)((1)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).OV)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(694), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x123 + 1)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(695), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_ADD_A_14H_given_A_plus126_and_14H_plus1_expect_14H_value_add_to_Acc_value_plus127(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x25, 0x14};
+
+
+
+  sfr[0xe0] = 126;
+
+
+
+  (*(Status*)&sfr[0xd0]).OV = 1;
+
+
+
+  ram[0x14] = 1;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x124]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((127)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(714), UNITY_DISPLAY_STYLE_INT8);
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).OV)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(715), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x124 + 2)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(716), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_ADD_A_hash55_given_A_plus126_and_85_expect_85_add_Acc_value_181_with_overflow(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x24, 85};
+
+
+
+  sfr[0xe0] = 126;
+
+
+
+  (*(Status*)&sfr[0xd0]).OV = 0;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x125]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((211)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(733), UNITY_DISPLAY_STYLE_INT8);
+
+  UnityAssertEqualNumber((UNITY_INT)((1)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).OV)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(734), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x125 + 2)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(735), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+void test_SUBB_A_R2_expect_R2_value_minus_to_Acc(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x9a};
+
+
+
+  sfr[0xe0] = -127;
+
+
+
+  sfr[0xd0] = 2 << 3;
+
+
+
+  (*(Status*)&sfr[0xd0]).CY = 0;
+
+
+
+  (*(Status*)&sfr[0xd0]).OV = 1;
+
+
+
+  ram[0x12] = -3;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x130]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((-124)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(779), UNITY_DISPLAY_STYLE_INT8);
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).OV)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(780), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT)((1)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).CY)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(781), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x130 + 1)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(782), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+void test_SUBB_A_R2_given_A_minus110_R2_40_CY_1_expect_minus151_in_Acc(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x9a};
+
+
+
+  sfr[0xe0] = -110;
+
+
+
+  sfr[0xd0] = 2 << 3;
+
+
+
+  (*(Status*)&sfr[0xd0]).CY = 1;
+
+
+
+  (*(Status*)&sfr[0xd0]).OV = 0;
+
+
+
+  ram[0x12] = 40;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x131]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((-151)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(813), UNITY_DISPLAY_STYLE_INT8);
+
+  UnityAssertEqualNumber((UNITY_INT)((1)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).OV)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(814), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).CY)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(815), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x131 + 1)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(816), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_SUBB_A_15H_given_A_minus90_location_15H_30_CY_1_expect_minus121_in_Acc(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x95, 0x15};
+
+
+
+  sfr[0xe0] = -90;
+
+
+
+  (*(Status*)&sfr[0xd0]).CY = 1;
+
+
+
+  (*(Status*)&sfr[0xd0]).OV = 1;
+
+
+
+  ram[0x15] = 30;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x132]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((-121)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(837), UNITY_DISPLAY_STYLE_INT8);
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).OV)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(838), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).CY)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(839), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x132 + 2)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(840), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_SUBB_A_given_A_119_minus_21_CY_1_OV_1_expect_98_in_Acc(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x94, 21};
+
+
+
+  sfr[0xe0] = 119;
+
+
+
+  (*(Status*)&sfr[0xd0]).CY = 1;
+
+
+
+  (*(Status*)&sfr[0xd0]).OV = 1;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x133]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((98)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(859), UNITY_DISPLAY_STYLE_INT8);
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).OV)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(860), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).CY)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(861), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x133 + 2)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(862), UNITY_DISPLAY_STYLE_HEX64);
 
 }

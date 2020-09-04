@@ -6,7 +6,7 @@
 
 ExecuteInstruction I8051ExecutionTable[256] = {
   [0x74] = movImmediateDataToAcc,
-  [0xe8] = mov, mov, mov, mov, mov, mov, mov,
+  [0xe8] = mov, mov, mov, mov, mov, mov, mov, mov,
   [0xe5] = mov,
   [0xe6] = mov, mov, 
   [0xf8] = movAccToReg,movAccToReg,movAccToReg,movAccToReg,
@@ -16,14 +16,35 @@ ExecuteInstruction I8051ExecutionTable[256] = {
   [0x78] = movDataToReg,movDataToReg,movDataToReg,movDataToReg,
            movDataToReg,movDataToReg,movDataToReg,movDataToReg,
   [0xf5] = movAccToDir,
+  [0x88] = movRegToDir,movRegToDir,movRegToDir,movRegToDir,
+           movRegToDir,movRegToDir,movRegToDir,movRegToDir,
+  [0x85] = movDirToDir,
+  [0x86] = movAddrToDir, movAddrToDir,
+  [0x75] = movDataToDir,
+  //[0xf6] = movAToAddr, movAToAddr,
+  [0x90] = movDataTodptr,
   [0xe4] = clrA,
   [0x04] = incA, 
-  [0x08] = incR, incR, incR, incR, incR, incR, incR, 
+  [0x08] = incR, incR, incR, incR, incR, incR, incR, incR,
+  [0x05] = incDir,
+  //[0x06] = incAddr, incAddr,
   [0x14] = decA,
+  [0x18] = decReg, decReg, decReg, decReg, 
+           decReg, decReg, decReg, decReg,
+  [0x15] = decDir, 
   [0x00] = nop,
   [0xc4] = swapA,
   [0xf4] = cplA,
-  
+  [0x68] = xrlReg, xrlReg, xrlReg, xrlReg, 
+           xrlReg, xrlReg, xrlReg, xrlReg,
+  [0x28] = addRegToA, addRegToA, addRegToA, addRegToA,
+           addRegToA, addRegToA, addRegToA, addRegToA,
+  [0x25] = addDirToA,
+  [0x24] = addDataToA, 
+  [0x98] = subbRegToA,subbRegToA,subbRegToA,subbRegToA,
+           subbRegToA,subbRegToA,subbRegToA,subbRegToA,
+  [0x95] = subbDirToA,
+  [0x94] = subbDataToA,
 };
 
 int pc = 0;
@@ -53,6 +74,7 @@ void executeInstruction()
   ExecuteInstruction executor = I8051ExecutionTable[codePtr[0]];
   executor();
 }
+
 //writeToMemory
 void writeToMemory(int address, AccessMode mode, uint8_t data) 
 { 
@@ -64,8 +86,8 @@ void writeToMemory(int address, AccessMode mode, uint8_t data)
   }else {
     ram[address] = data;
   }
-   
 }
+
 //readFromMemory
 uint8_t readFromMemory(int address, AccessMode mode)
 {
@@ -79,6 +101,38 @@ uint8_t readFromMemory(int address, AccessMode mode)
   }
 }
 
+//sum function 
+uint8_t sum(uint32_t val1, uint32_t val2)
+{
+  uint32_t val3 = val1 + val2;
+  psw = psw & 0x7f;
+  psw = ((val3 >> 1) & 0x80) | psw;
+  return (uint8_t)val3;
+}
+
+//subtract function 
+uint8_t substract(uint32_t val1, uint32_t val2)
+{
+  uint32_t val3 = val1 - val2;
+  psw = psw & 0x7f;
+  psw = ((val3 >> 1) & 0x80) | psw;
+  return (uint8_t)val3;
+}
+
+//handle overflow function
+void handleOverFlow(uint32_t val1, uint32_t val2, uint32_t result)
+{
+  psw = psw & 0xfb;
+  psw = ((val1 & 0x80) & (val2 & 0x80) & (~result & 0x80) 
+        | (~val1 & 0x80) & (~val2 & 0x80) & (result & 0x80)) >> 5
+        | psw;
+}
+
+void dataPointer(uint8_t val1, uint8_t val2)
+{
+  DPH = val1;
+  DPL = val2;
+}
 /*
  * 0xeb = 1110 1rrr
  * bit number 3 of 0xeb
@@ -143,12 +197,48 @@ void movDataToReg()
 }
 void movAccToDir()
 {
-  uint8_t *codePtr = &codeMemory[pc];   //*codePtr contains the code 0xf5
-  int directData = readFromMemory(codePtr[1], DIRECT_ADDRESSING); //codePtr[1] contains the ram[0x10] and read 
-                                                                  //DIRECT_ADDRESSING
-  directData = acc;
-  //codePtr[1] = acc;
+  uint8_t *codePtr = &codeMemory[pc]; 
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, acc);
   pc += 2;
+}
+void movRegToDir()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, r(*codePtr & 7));
+  pc += 2;
+}
+void movDirToDir()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int dataRead = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  writeToMemory(codePtr[2], DIRECT_ADDRESSING, dataRead);
+  pc += 2;
+}
+void movAddrToDir()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int readData = readFromMemory(r(codePtr[0] & 1), INDIRECT_ADDRESSING);
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, readData);
+  pc += 2;
+}
+void movDataToDir()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, codePtr[2]);
+  pc += 2;
+}
+/*void movAToAddr()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int readData = readFromMemory(r(codePtr[0] & 1), INDIRECT_ADDRESSING);
+  
+  pc += 1;
+}*/
+void movDataTodptr()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  dataPointer(codePtr[1], codePtr[2]);
+  pc += 3;
 }
 void clrA() 
 {
@@ -163,17 +253,48 @@ void incA()
   acc += 1;
   pc += 1; 
 }
+void incR() 
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  r(*codePtr & 7) += 1;
+  pc += 1;
+}
+void incDir()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int incData = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  incData += 1;
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, incData);
+  pc += 2;
+}
+/*void incAddr()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int incAddrData = readFromMemory(r(codePtr[0] & 1), INDIRECT_ADDRESSING);
+  incAddrData += 1;
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, incAddrData);
+  pc += 1;
+}*/
 void decA()
 {
   uint8_t *codePtr = &codeMemory[pc];
   acc -= 1;
   pc += 1; 
 }
-void incR() 
+void decReg()
 {
   uint8_t *codePtr = &codeMemory[pc];
-  r(*codePtr & 7) += 1;
+  r(*codePtr & 7) -= 1;
   pc += 1;
+}
+void decDir()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int decData = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  decData -= 1;
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, decData);
+  pc += 2;
+  
 }
 void nop()
 {
@@ -205,5 +326,60 @@ void cplA()
   acc = (~acc);
   pc += 1;
 }
-
+void xrlReg()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  acc = (acc ^ (r(*codePtr & 7)));
+  pc += 1;
+}
+void addRegToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int result = sum(acc, r(*codePtr & 7));
+  handleOverFlow(acc, r(*codePtr & 7), result);
+  acc = result;
+  pc += 1;
+}
+void addDirToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int dataLocation = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  int result = sum(acc, dataLocation);
+  handleOverFlow(acc, dataLocation, result);  
+  acc = result;
+  pc += 2;
+}
+void addDataToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int result = sum(acc, codePtr[1]);
+  handleOverFlow(acc, codePtr[1], result);
+  acc = result;
+  pc += 2;
+}
+void subbRegToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int result = substract(acc, status.CY + r(*codePtr & 7));
+  handleOverFlow(acc, -(status.CY + r(*codePtr & 7)), result);
+  acc = result;
+  pc += 1;
+}
+void subbDirToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int dataLocation = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  int result = substract(acc, status.CY + dataLocation);
+  handleOverFlow(acc, -(status.CY + dataLocation), result);
+  acc = result;
+  pc += 2; 
+}
+void subbDataToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int result = substract(acc, codePtr[1]);
+  handleOverFlow(acc, -(status.CY + codePtr[1]), result);
+  acc = result;
+  pc += 2;
+}
 
