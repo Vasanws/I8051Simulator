@@ -40,11 +40,12 @@ void writeToMemory(int address, AccessMode mode, uint8_t data);
 uint8_t readFromMemory(int address, AccessMode mode);
 uint8_t sum(uint32_t val1, uint32_t val2);
 uint8_t substract(uint32_t val1, uint32_t val2);
+uint8_t leftRotate(int num, uint8_t rotation);
 void handleOverFlow(uint32_t val1, uint32_t val2, uint32_t result);
 
 void executeInstruction();
 void mov();
-void movImmediateDataToAcc();
+void movDataToAcc();
 void movAccToReg();
 void movDirToReg();
 void movDataToReg();
@@ -54,15 +55,18 @@ void movDirToDir();
 void movAddrToDir();
 void movDataToDir();
 void movAToAddr();
+void movDirToAddr();
+void movDataToAddr();
 void movDataTodptr();
 void clrA();
 void incA();
-void incR();
+void incReg();
 void incDir();
 void incAddr();
 void decA();
 void decReg();
 void decDir();
+void decAddr();
 void nop();
 void swapA();
 void cplA();
@@ -70,15 +74,17 @@ void xrlReg();
 void addRegToA();
 void addDirToA();
 void addDataToA();
+void addAddrToA();
 void subbRegToA();
 void subbDirToA();
 void subbDataToA();
+void subbAddrToA();
+void anlRegtoA();
+void anlDirToA();
+void anlAddrToA();
+void anlDataToA();
+void anlAToDir();
+void anlDataToDir();
+
 
 #endif // I8051SIMULATOR_H
-
-
-/*psw
-76543210
-...10...
-
-......10 * 8 = 16*/

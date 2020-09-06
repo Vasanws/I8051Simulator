@@ -3,35 +3,35 @@
   :path: test
   :file: test_I8051Simulator.c
 :successes:
-- :test: test_condition_for_address_0xfa_to_DIRECT_ADDRESSING_contains_data_0x76_expect_address_0xfa_points_to_data_0x76_at_SFR_DIRECT_ADDRESSING
+- :test: test_given_address_0xfa_is_DIRECT_ADDRESSING_mode_data_0x76_in_SFR_expect_data_0x76_write_to_address_0xfa_mode_DIRECT_ADDRESSING_in_SFR
   :line: 14
   :message: ''
   :unity_test_time: 0
-- :test: test_condition_for_address_0x9b_to_INDIRECT_ADDRESSING_contains_data_0x69_expect_address_0x9b_points_to_data_0x69_at_SRAM_INDIRECT_ADDRESSING
+- :test: test_given_address_0x9b_is_INDIRECT_ADDRESSING_mode_data_0x69_top_SRAM_expect_data_0x69_write_to_address_0x9b_mode_INDIRECT_ADDRESSING_in_top_SRAM
   :line: 25
   :message: ''
   :unity_test_time: 0
-- :test: test_condition_for_address_0x11_to_DIRECT_ADDRESSING_contains_data_0x43_expect_address_0x11_points_to_data_0x43_at_RAM_DIRECT_ADDRESSING
+- :test: test_given_address_0x11_is_DIRECT_ADDRESSING_data_0x43_bottom_RAM_expect_data_0x43_write_to_address_0x11_mode_DIRECT_ADDRESSING_in_bottom_RAM
   :line: 35
   :message: ''
   :unity_test_time: 0
-- :test: test_condition_for_address_0x7e_to_INDIRECT_ADDRESSING_contains_data_0x55_expect_address_0x7e_points_to_data_0x55_at_RAM_INDIRECT_ADDRESSING
+- :test: test_given_address_0x7e_to_INDIRECT_ADDRESSING_mode_data_0x55_bottom_RAM_expect_data_0x55_write_to_address_0x7e_mode_INDIRECT_ADDRESSING_in_bottom_RAM
   :line: 45
   :message: ''
   :unity_test_time: 0
-- :test: test_condition_for_address_0xff_read_mode_DIRECT_ADDRESSING_of_SFR_expect_to_read_address_0xff_from_SFR_DIRECT_ADDRESSING
+- :test: test_given_address_0xff_readmode_DIRECT_ADDRESSING_of_SFR_expect_to_read_address_0xff_from_SFR_mode_DIRECT_ADDRESSING
   :line: 57
   :message: ''
   :unity_test_time: 0
-- :test: test_condition_for_address_0x88_read_mode_INDIRECT_ADDRESSING_of_SRAM_expect_to_read_address_0x88_from_SRAM_INDIRECT_ADDRESSING
+- :test: test_given_address_0x88_read_mode_INDIRECT_ADDRESSING_of_SRAM_expect_to_read_address_0x88_from_SRAM_mode_INDIRECT_ADDRESSING
   :line: 70
   :message: ''
   :unity_test_time: 0
-- :test: test_condition_for_address_0x42_read_mode_DIRECT_ADDRESSING_of_RAM_expect_to_read_address_0x42_from_RAM_DIRECT_ADDRESSING
+- :test: test_given_address_0x42_read_mode_DIRECT_ADDRESSING_of_RAM_expect_to_read_address_0x42_from_RAM_mode_DIRECT_ADDRESSING
   :line: 83
   :message: ''
   :unity_test_time: 0
-- :test: test_condition_for_address_0x38_read_mode_INDIRECT_ADDRESSING_of_RAM_expect_to_read_address_0x38_from_RAM_INDIRECT_ADDRESSING
+- :test: test_given_address_0x38_read_mode_INDIRECT_ADDRESSING_of_RAM_expect_to_read_address_0x38_from_RAM_mode_INDIRECT_ADDRESSING
   :line: 95
   :message: ''
   :unity_test_time: 0
@@ -43,136 +43,184 @@
   :line: 129
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_given_25H_expect_MOV_25H_from_R3_Bank2_to_acc
+- :test: test_MOV_A_R3_given_R3_value_25H_expect_value_R3_25H_mov_to_A
   :line: 153
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_given_value_1CH_location_0FH_expect_MOV_0FH_value_direct_to_acc
+- :test: test_MOV_0FH_A_given_0FH_value_1CH_expect_value_of_location_0FH_mov_to_A
   :line: 174
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_given_address_of_R1_value_21H_expect_address_of_R1_value_21H_to_acc
+- :test: test_MOV_addressR1_A_given_addressR1_value_21H_expect_value_of_addressR1_mov_to_A
   :line: 193
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_A_hash22H_given_22H_to_acc_expect_22H_direct_to_acc
+- :test: test_MOV_hash22H_A_given_data_hash22H_expect_hash22_mov_to_A
   :line: 217
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_R3_A_given_99H_in_acc_expect_99H_from_A_to_R3
+- :test: test_MOV_A_R3_given_A_value_99H_expect_value_of_A_mov_to_R3
   :line: 233
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_R4_04H_given_44H_in_address_04H_expect_44H_from_04H_to_R4
+- :test: test_MOV_04H_R4_given_04H_value_44H_expect_value_of_location_04H_mov_to_R4
   :line: 254
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_R6_hash77H_expect_hash77H_to_R6
+- :test: test_MOV_hash77H_R6_given_data_hash77H_expect_data_mov_to_R6
   :line: 277
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_12H_A_expect_value_of_A_hash54H_direct_to_location_12H
+- :test: test_MOV_12H_A_given_A_value_54H_expect_value_of_A_mov_to_location_12H
   :line: 298
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_11H_R5_expect_R5_move_to_location_11H
+- :test: test_MOV_11H_R5_given_R5_value_66H_expect_value_of_R5_mov_to_location_11H
   :line: 317
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_18H_1AH_expect_location_of_1AH_move_to_location_18H
+- :test: test_MOV_18H_1AH_given_1AH_value_56H_expect_value_of_location_1AH_mov_to_location_18H
   :line: 339
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_1BH_addressR1_expect_addressR1_mov_to_location_1BH
+- :test: test_MOV_1BH_addressR1_given_addressR1_value_22H_expect_value_of_addressR1_mov_to_location_1BH
   :line: 358
   :message: ''
   :unity_test_time: 0
-- :test: test_mov_10H_hash91_expect_hash91_move_to_location_10H
+- :test: test_MOV_10H_hash91H_given_data_hash91_expect_data_mov_to_location_10H
   :line: 382
   :message: ''
   :unity_test_time: 0
-- :test: test_MOV_DPTR_hash1234_given_hash1234_expect_DPH_hold_hash12H_DPL_hold_hash34H
+- :test: test_MOV_addressR1_A_given_A_value_77H_expect_value_of_A_mov_to_addressR1
+  :line: 401
+  :message: ''
+  :unity_test_time: 0
+- :test: test_MOV_addressR1_1FH_given_1FH_value_78H_expect_value_of_location_1FH_mov_to_addressR1
   :line: 425
   :message: ''
   :unity_test_time: 0
-- :test: test_given_value_22H_to_acc_expect_CLR_value_in_acc
-  :line: 445
+- :test: test_MOV_addressR1_hash66H_given_data_hash66H_expect_data_mov_to_addressR1
+  :line: 451
   :message: ''
   :unity_test_time: 0
-- :test: test_given_value_to_acc_value_7CH_expect_value_to_increment_plus1_to_7DH
-  :line: 461
+- :test: test_MOV_DPTR_hash1234H_given_data_hash1234H_expect_data_mov_to_DPTR_DH_hold_12H_and_DPL_hold_34H
+  :line: 474
   :message: ''
   :unity_test_time: 0
-- :test: test_INC_R6_expected_value_in_R6_inc
-  :line: 477
+- :test: test_INC_R6_given_R6_value_45H_expect_value_of_R6_plus1_to_46H
+  :line: 495
   :message: ''
   :unity_test_time: 0
-- :test: test_INC_17H_expected_hash45_increment_to_hash46_in_location_17H
-  :line: 498
+- :test: test_INC_17H_given_17H_value_54H_expect_value_of_location_17H_plus1_to_55H
+  :line: 516
   :message: ''
   :unity_test_time: 0
-- :test: test_given_value_to_acc_value_65H_expect_value_to_decrement_MINUS1_to_64H
-  :line: 541
+- :test: test_INC_addressR1_given_addressR1_value_67H_expect_value_of_addressR1_plus1_to_68H
+  :line: 535
   :message: ''
   :unity_test_time: 0
-- :test: test_DEC_R5_expected_value_in_R5_decrement
-  :line: 557
+- :test: test_DEC_A_given_A_value_65H_expect_value_of_A_MINUS1_to_64H
+  :line: 559
   :message: ''
   :unity_test_time: 0
-- :test: test_INC_16H_expected_hash44_decrement_to_hash43_in_location_16H
-  :line: 578
+- :test: test_DEC_R5_given_R5_value_55H_expect_value_of_R5_MINUS1_to_54H
+  :line: 575
   :message: ''
   :unity_test_time: 0
-- :test: test_NOP_to_skip_expect_NOP_to_skip_or_do_
-  :line: 597
+- :test: test_INC_16H_given_16H_value_44H_expect_value_of_location_16H_MINUS1_to_43H
+  :line: 596
   :message: ''
   :unity_test_time: 0
-- :test: test_SWAP_A_give_value_6BH_expect_SWAP_A_B6H_in_acc
-  :line: 613
+- :test: test_DEC_addressR1_given_addressR1_value_72H_expect_value_of_addressR1_MINUS1_to_76H
+  :line: 615
   :message: ''
   :unity_test_time: 0
-- :test: test_given_value_23H_to_acc_expect_23H_complement_become_DCH_in_acc
-  :line: 638
+- :test: test_CLR_A_given_A_value_22H_expect_value_of_A_is_clear
+  :line: 639
   :message: ''
   :unity_test_time: 0
-- :test: test_XRL_Acc_R2_expect_R2_XRL_Acc
-  :line: 654
+- :test: test_NOP_to_perform_a_skip
+  :line: 655
   :message: ''
   :unity_test_time: 0
-- :test: test_add_Acc_R3_expect_R3_value_add_to_Acc
-  :line: 674
+- :test: test_SWAP_A_given_A_value_6BH_expect_value_of_A_swap_to_B6H_to_A
+  :line: 671
   :message: ''
   :unity_test_time: 0
-- :test: test_ADD_A_14H_given_A_plus126_and_14H_plus1_expect_14H_value_add_to_Acc_value_plus127
-  :line: 699
+- :test: test_CPL_A_given_A_value_23H_expect_value_of_A_compliment_to_DCH
+  :line: 696
   :message: ''
   :unity_test_time: 0
-- :test: test_ADD_A_hash55_given_A_plus126_and_85_expect_85_add_Acc_value_181_with_overflow
-  :line: 720
+- :test: test_XRL_A_R2_given_R2_value_15H_and_A_value_24H_expect_value_of_R2_and_A_XOR_to_31H
+  :line: 712
   :message: ''
   :unity_test_time: 0
-- :test: test_SUBB_A_R2_expect_R2_value_minus_to_Acc
-  :line: 760
+- :test: test_ADD_A_R3_given_R3_value_4_and_A_value_126_expect_value_R3_add_A_equal_plus130
+  :line: 732
   :message: ''
   :unity_test_time: 0
-- :test: test_SUBB_A_R2_given_A_minus110_R2_40_CY_1_expect_minus151_in_Acc
-  :line: 794
+- :test: test_ADD_A_14H_given_A_value_plus126_and_14H_plus1_expect_value_of_location_14H_value_add_A_equal_plus127
+  :line: 755
   :message: ''
   :unity_test_time: 0
-- :test: test_SUBB_A_15H_given_A_minus90_location_15H_30_CY_1_expect_minus121_in_Acc
-  :line: 820
+- :test: test_ADD_A_given_data_plus85_and_A_plus126_expect_data_add_A_equal_plus211
+  :line: 776
   :message: ''
   :unity_test_time: 0
-- :test: test_SUBB_A_given_A_119_minus_21_CY_1_OV_1_expect_98_in_Acc
-  :line: 844
+- :test: test_ADD_A_addressR0_given_addressR0_value_plus34_and_A_plus55_expect_addressR0_add_A_equal_89
+  :line: 795
+  :message: ''
+  :unity_test_time: 0
+- :test: test_SUBB_A_R2_given_R2_value_minus3_and_A_value_minus127_and_CY_0_expect_value_A_minus_CY_minus_R2_new_value_A_minus124
+  :line: 843
+  :message: ''
+  :unity_test_time: 0
+- :test: test_SUBB_A_R2_given_R3_value_40_and_A_value_minus110_and_CY_1_expect_value_A_minus_CY_minus_R3_new_value_A_minus151
+  :line: 876
+  :message: ''
+  :unity_test_time: 0
+- :test: test_SUBB_A_15H_given_15H_value_plus30_and_A_value_minus90_and_CY_1_expect_values_A_minus_CY_minus_location_15H_new_value_A_minus121
+  :line: 902
+  :message: ''
+  :unity_test_time: 0
+- :test: test_SUBB_A_21_given_A_value_plus119_and_CY_1_expect_value_of_A_minus_CY_1_minus_21_new_value_A_plus97
+  :line: 926
+  :message: ''
+  :unity_test_time: 0
+- :test: test_SUBB_A_addressR0_given_addressR0_value_plus126_and_A_value_minus40_CY_1_expect_value_of_A_minus_CY_1_minus_addressR0_new_value_minus167
+  :line: 948
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ANL_A_R3_given_R3_55H_and_A_C3H_expect_values_R3_logicalAND_A
+  :line: 977
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ANL_A_14H_given_A_4FH_and_location_14H_value_62H_expect_values_location_14H_logicalAND_A
+  :line: 997
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ANL_A_hash3AH_given_data_hash3AH_and_A_value_C3H_expect_values_hash3AH_logicalAND_A
+  :line: 1015
+  :message: ''
+  :unity_test_time: 0
+- :test: test_ANL_A_addressR0_given_addressR0_value_63H_and_A_value_21H_expect_values_of_addressR0_logicalAND_A
+  :line: 1031
+  :message: ''
+  :unity_test_time: 0
+- :test: test_1CH_A_given_A_value_65H_and_location_1CH_79H_expect_values_A_logicalAND_location_1CH
+  :line: 1053
+  :message: ''
+  :unity_test_time: 0
+- :test: test_1DH_hash55H_given_1DH_value_C3H_expect_hash55H_logicalAND_location_1DH
+  :line: 1071
   :message: ''
   :unity_test_time: 0
 :failures: []
 :ignores: []
 :counts:
-  :total: 41
-  :passed: 41
+  :total: 53
+  :passed: 53
   :failed: 0
   :ignored: 0
 :stdout: []
-:time: 0.024718699998629745
+:time: 0.01984709999669576
