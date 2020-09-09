@@ -22,7 +22,7 @@ struct Status {
 #define acc      sfr[0xe0]
 #define psw      sfr[0xd0]
 #define status   (*(Status*)&sfr[0xd0])
-#define B        sfr[0cf0]
+#define B        sfr[0xf0]
 #define r(n)     ram[((psw >> 3) & 0x03) * 8 + (n)]
 #define DPH      sfr[0x83]
 #define DPL      sfr[0x82]
@@ -32,7 +32,7 @@ extern uint8_t ram[];
 extern uint8_t sfr[];
 extern uint8_t xram[];
 extern uint8_t codeMemory[];
-extern int pc;
+extern uint16_t pc;
 
 typedef void(*ExecuteInstruction)(void);
 
@@ -40,16 +40,15 @@ void writeToMemory(int address, AccessMode mode, uint8_t data);
 uint8_t readFromMemory(int address, AccessMode mode);
 uint8_t sum(uint32_t val1, uint32_t val2);
 uint8_t substract(uint32_t val1, uint32_t val2);
-uint8_t leftRotate(int num, uint8_t rotation);
 void handleOverFlow(uint32_t val1, uint32_t val2, uint32_t result);
 
 void executeInstruction();
 void mov();
-void movDataToAcc();
-void movAccToReg();
+void movDataToA();
+void movAToReg();
 void movDirToReg();
 void movDataToReg();
-void movAccToDir();
+void movAToDir();
 void movRegToDir();
 void movDirToDir();
 void movAddrToDir();
@@ -68,9 +67,19 @@ void decReg();
 void decDir();
 void decAddr();
 void nop();
+void rrA();
+void rrcA();
+void rlA();
+void rlcA();
+void mulAB();
 void swapA();
 void cplA();
-void xrlReg();
+void xrlAToDir();
+void xrlDataToDir();
+void xrlDataToA();
+void xrlDirToA();
+void xrlAddrToA();
+void xrlRegToA();
 void addRegToA();
 void addDirToA();
 void addDataToA();
@@ -79,12 +88,22 @@ void subbRegToA();
 void subbDirToA();
 void subbDataToA();
 void subbAddrToA();
+void orlAToDir();
+void orlDataToDir();
+void orlDataToA();
+void orlAddrToA();
+void orlDirToA();
+void orlRegToA();
 void anlRegtoA();
 void anlDirToA();
 void anlAddrToA();
 void anlDataToA();
 void anlAToDir();
 void anlDataToDir();
-
-
+void sjmp();
+void ljmp();
+void jz();
+void jnz();
+void jnc();
+void jc();
 #endif // I8051SIMULATOR_H

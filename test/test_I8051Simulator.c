@@ -708,8 +708,149 @@ void test_CPL_A_given_A_value_23H_expect_value_of_A_compliment_to_DCH(void)
   TEST_ASSERT_EQUAL_PTR(0x0203 + 1, pc);
 }
 
+// RL A 
+void test_RL_A_given_A_value_E6H_expect_value_A_rotate_left_73H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x23};
+  //setup acc a value
+  acc = 0xe6;
+  //setup CY to 0 
+  status.CY = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0204);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xcd, acc);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0204 + 1, pc);  
+}
+
+// RLC A 
+void test_RLC_A_given_A_value_E6H_expect_value_A_rotate_left_B9H_with_carry_set(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x33};
+  //setup acc a value
+  acc = 0xe6;
+  //setup of CY to 0 
+  status.CY = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0206);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xcc, acc);
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0206 + 1, pc);  
+}
+
+// RLC A
+void test_RLC_A_given_A_value_F4H_expect_value_A_rotate_left_E9H_with_carry_set(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x33};
+  //setup acc a value
+  acc = 0xf4;
+  //setup of CY to 1 
+  status.CY = 1;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0207);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xe9, acc);
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0207 + 1, pc);  
+}
+
+// RR A 
+void test_RR_A_given_A_value_59H_expect_value_A_rotate_right_ACH(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x03};
+  //setup acc a value
+  acc = 0x59;
+  //setup CY to 0 
+  status.CY = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0205);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xac, acc);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0205 + 1, pc); 
+}
+
+// RRC A 
+void test_RRC_A_given_A_value_D6H_expect_value_A_rotate_right_6BH_with_carry_set(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x13};
+  //setup acc a value
+  acc = 0xd6;
+  //setup of CY to 0 
+  status.CY = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0208);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0x6b, acc);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0208 + 1, pc); 
+}
+
+// RRC A
+void test_RRC_A_given_A_value_C4H_expect_value_A_rotate_right_H_with_carry_set(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x13};
+  //setup acc a value
+  acc = 0xC4;
+  //setup of CY to 1 
+  status.CY = 1;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0209);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xe2, acc);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0209 + 1, pc); 
+}
+
+// MUL AB 
+// A = 54H, B = A3H
+// A * B = 357CH
+void test_MUL_A_B_given_A_value_54H_and_B_value_A3H_expect_values_A_multiply_B_product_357CH(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0xa4};
+  //setup acc a value
+  acc = 0x54;
+  //setup B a value
+  B = 0xa3;
+  //setup CY to 1 
+  status.CY = 1;
+  //setup OV to 0 
+  status.OV = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0210);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_INT8(0x7c, acc);
+  TEST_ASSERT_EQUAL_INT8(0x35, B);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL(1, status.OV);
+  TEST_ASSERT_EQUAL_PTR(0x0210 + 1, pc);
+}
+
 // XRL A,R2
-void test_XRL_A_R2_given_R2_value_15H_and_A_value_24H_expect_value_of_R2_and_A_XOR_to_31H(void)
+void test_XRL_A_R2_given_R2_value_15H_and_A_value_24H_expect_value_of_R2_XOR_A(void)
 {
   //test setup fixture
   uint8_t machineCode[] = {0x6a};
@@ -726,6 +867,101 @@ void test_XRL_A_R2_given_R2_value_15H_and_A_value_24H_expect_value_of_R2_and_A_X
   //code test output 
   TEST_ASSERT_EQUAL(0x31, acc);
   TEST_ASSERT_EQUAL_PTR(0x0001 + 1, pc);
+}
+
+// XRL A,12H
+void test_XRL_A_12H_given_12H_value_15H_and_A_value_24H_expect_values_of_location_12H_XOR_A(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x65, 0x12};
+  //setup acc a value
+  acc = 0x24;
+  //assign value in R2 
+  ram[0x12] = 0x15;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0002);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0x31, acc);
+  TEST_ASSERT_EQUAL_PTR(0x0002 + 2, pc);
+}
+
+// XRL A,#15H
+void test_XRL_A_hash15H_given_A_value_0x24_expect_value_of_A_XOR_hash15H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x64, 0x15};
+  //setup acc a value
+  acc = 0x24;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0003);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0x31, acc);
+  TEST_ASSERT_EQUAL_PTR(0x0003 + 2, pc);
+}
+
+// XRL A,@R0
+void test_XRL_A_addressR0_given_A_value_24H_and_addressR0_value_15H_expect_values_of_addressR0_XOR_A(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x66};
+  //setup acc a value
+  acc = 0x24;
+  //RAM location 
+  ram[0xd6] = 0x15;
+  sfr[0xd6] = 0;
+  //set R0 10 (Bank2) bits D4 & D3 shift left 3 times
+  psw = 2 << 3;
+  //test setup calling the address 
+  r(0) = 0xd6;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0004);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_INT8(0x31, acc);
+  TEST_ASSERT_EQUAL(0xd6, r(0));
+  TEST_ASSERT_EQUAL_PTR(0x0004 + 1, pc);
+}
+
+// XRL 14H,A 
+void test_XRL_14H_A_given_A_value_15H_and_location_14H_value_24H_expect_values_A_XOR_location_14H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x62, 0x14};
+  //setup acc a value
+  acc = 0x15;
+  //assign value to location 14H
+  ram[0x14] = 0x24;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0005);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0x15, acc);
+  TEST_ASSERT_EQUAL(0x31, ram[0x14]);
+  TEST_ASSERT_EQUAL_PTR(0x0005 + 2, pc); 
+}
+
+// XRL 13H,#15H
+void test_XRL_13H_hash15H_given_13H_value_24H_expect_value_of_location_13H_XOR_hash15H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x63,0x13,0x15};
+  //setup acc to 0
+  acc = 0;
+  //setup a value to location 13H
+  ram[0x13] = 0x24;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0006);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0x31, ram[0x13]);
+  TEST_ASSERT_EQUAL_PTR(0x0006 + 3, pc);
 }
 
 // ADD A,R3 
@@ -1045,7 +1281,8 @@ void test_ANL_A_addressR0_given_addressR0_value_63H_and_A_value_21H_expect_value
   copyCodeToCodeMemory(machineCode, pc = 0x0603);
   //run code under test 
   executeInstruction();
-  //code test output 
+  //code test output
+  TEST_ASSERT_EQUAL(0x21,acc);
   TEST_ASSERT_EQUAL(0xe4, r(0));
   TEST_ASSERT_EQUAL_PTR(0x603 + 1, pc);
 }
@@ -1083,4 +1320,277 @@ void test_1DH_hash55H_given_1DH_value_C3H_expect_hash55H_logicalAND_location_1DH
   //code test output 
   TEST_ASSERT_EQUAL(0x21, ram[0x1d]);
   TEST_ASSERT_EQUAL_PTR(0x0605 + 3, pc);
+}
+
+// ORL A,R5
+void test_ORL_A_R5_given_R5_value_55H_and_A_value_C3H_expect_values_R5_logicalOR_A(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x4d};
+  //assign acc a value 
+  acc = 0xc3;
+  //set R3 10(bank2) bitwise D3 & D4 
+  psw = 2 << 3;
+  //assign value in R2 
+  ram[0x15] = 0x55;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0700);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xd7, acc);
+  TEST_ASSERT_EQUAL_PTR(0x0700 + 1, pc);
+}
+
+// ORL A,16H
+void test_ORL_A_16H_given_location_16H_value_55H_and_A_value_C3H_expect_values_of_location_16H_logicalOR_A(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x45, 0x16};
+  //assign acc a value 
+  acc = 0xc3;
+  //assign value to location 14H
+  ram[0x16] = 0x55;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0701);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xd7, acc);
+  TEST_ASSERT_EQUAL_PTR(0x0701 + 2, pc); 
+}
+
+// ORL A,#55H
+void test_ORL_A_hash55H_given_A_value_C3H_expect_value_hash55H_logicalOR_A(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x44, 0x55};
+  //assign acc a value 
+  acc = 0xc3;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0702);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xd7, acc);
+  TEST_ASSERT_EQUAL_PTR(0x0702 + 2, pc); 
+}
+
+// ORL A,@R0
+void test_ORL_A_addressR0_given_addressR0_value_55H_and_A_value_C3H_expect_values_of_addressR0_logicalOR_A(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x46};
+  //setup acc a value
+  acc = 0xc3;
+  //RAM location 
+  ram[0xe8] = 0x55;
+  sfr[0xe8] = 0;
+  //set R0 10 (Bank2) bits D4 & D3 shift left 3 times
+  psw = 2 << 3;
+  //test setup calling the address 
+  r(0) = 0xe8;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0703);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xd7, acc);
+  TEST_ASSERT_EQUAL(0xe8, r(0));
+  TEST_ASSERT_EQUAL_PTR(0x703 + 1, pc);
+}
+
+// ORL 1AH,A
+void test_1AH_A_given_A_value_55H_and_location_1CH_C3H_expect_values_A_logicalOR_location_1CH(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x42, 0x1a};
+  //setup acc a value 
+  acc = 0x55;
+  //assign value to location 1CH
+  ram[0x1a] = 0xc3;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0704);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xd7, ram[0x1a]);
+  TEST_ASSERT_EQUAL_PTR(0x0704 + 2, pc);
+}
+
+// ORL 11H,#55H
+void test_11H_hash55H_given_location_11H_value_C3H_expect_hash55H_logicalOR_location_11H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x43, 0x11, 0x55};
+  //setup acc to 0 
+  acc = 0;
+  //assign value to location 1DH 
+  ram[0x11] = 0xc3;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0705);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL(0xd7, ram[0x11]);
+  TEST_ASSERT_EQUAL_PTR(0x0705 + 3, pc);
+}
+
+// SJMP 70 
+void test_SJMP_70_expect_relative_address_jump_to_2003H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x80, 70};
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2003);
+  //run code under test 
+  executeInstruction();
+  //code test output
+  TEST_ASSERT_EQUAL_UINT16(0x2003 + 70 + 2, pc);
+}
+
+// SJMP -60 
+void test_SJMP_minus60_expect_relative_address_jump_to_2003H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x80, -60};
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2004);
+  //run code under test 
+  executeInstruction();
+  //code test output
+  TEST_ASSERT_EQUAL_UINT16(0x2004 + (-60) + 2, pc);
+}
+
+// LJMP 1234H
+void test_LJMP_1234H_expect_1234H_LJMP_to_location_23H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x10, 0x12, 0x34};
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2005);
+  //run code under test 
+  executeInstruction();
+  //code test output
+  TEST_ASSERT_EQUAL_UINT16(0x1234,pc);
+}
+
+// JZ 10
+void test_JZ_10_expect_not_JMP_when_acc_is_not_0(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x60, 10};
+  //setup acc a value 
+  acc = 0x01;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2006);
+  //run code under test 
+  executeInstruction();
+  TEST_ASSERT_EQUAL(1, acc);
+  TEST_ASSERT_EQUAL_UINT16(0x2006 + 2, pc);
+}
+
+// JZ 10
+void test_JZ_10_expect_JMP_when_acc_is_0(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x60, 10};
+  //setup acc a value 
+  acc = 0x00;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2007);
+  //run code under test 
+  executeInstruction();
+  TEST_ASSERT_EQUAL(0, acc);
+  TEST_ASSERT_EQUAL_UINT16(0x2007 + 10 + 2, pc);
+}
+
+// JNZ 40
+void test_JNZ_40_expect_no_JMP_when_acc_is_not_zero(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x70, 40};
+  //setup acc a value 
+  acc = 0x00;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2008);
+  //run code under test 
+  executeInstruction();
+  TEST_ASSERT_EQUAL(0, acc);
+  TEST_ASSERT_EQUAL_UINT16(0x2008 + 2, pc);
+}
+
+// JNZ 40
+void test_JNZ_40_expect_JMP_when_acc_is_not_zero(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x70, 40};
+  //setup acc a value 
+  acc = 0x23;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2009);
+  //run code under test 
+  executeInstruction();
+  TEST_ASSERT_EQUAL(0x23, acc);
+  TEST_ASSERT_EQUAL_UINT16(0x2009 + 40 + 2, pc);
+}
+
+// JNC 30
+void test_JNC_30_expect_no_JMP_when_carry_is_set(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x50, 30};
+  //setup carry to 1 
+  status.CY = 1;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2010);
+  //run code under test 
+  executeInstruction();
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_UINT16(0x2010 + 2, pc);
+}
+
+// JNC 30
+void test_JNC_30_expect_JMP_when_carry_is_not_set(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x50, 30};
+  //setup carry to 1 
+  status.CY = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2011);
+  //run code under test 
+  executeInstruction();
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_UINT16(0x2011 + 30 + 2, pc);
+}
+
+// JC 44
+void test_JNC_44_expect_JMP_when_carry_is_set(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x40, 44};
+  //setup carry to 1 
+  status.CY = 1;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2012);
+  //run code under test 
+  executeInstruction();
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_UINT16(0x2012 + 44 + 2, pc);
+}
+
+// JC 44
+void test_JNC_44_expect_not_JMP_when_carry_is_not_set(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x40, 44};
+  //setup carry to 1 
+  status.CY = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x2012);
+  //run code under test 
+  executeInstruction();
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_UINT16(0x2012 + 2, pc);
 }

@@ -5,7 +5,7 @@
 
 
 ExecuteInstruction I8051ExecutionTable[256] = {
-  [0x74] = movDataToAcc,
+  [0x74] = movDataToA,
   [0xe5] = mov,
   [0xe6] = mov, mov,
   [0xe8] = mov, mov, mov, mov, mov, mov, mov, mov,
@@ -13,14 +13,14 @@ ExecuteInstruction I8051ExecutionTable[256] = {
            movDataToReg,movDataToReg,movDataToReg,movDataToReg,
   [0xa8] = movDirToReg,movDirToReg,movDirToReg,movDirToReg,
            movDirToReg,movDirToReg,movDirToReg,movDirToReg,
-  [0xf8] = movAccToReg,movAccToReg,movAccToReg,movAccToReg,
-           movAccToReg,movAccToReg,movAccToReg,movAccToReg,
+  [0xf8] = movAToReg,movAToReg,movAToReg,movAToReg,
+           movAToReg,movAToReg,movAToReg,movAToReg,
   [0x75] = movDataToDir,
   [0x85] = movDirToDir,
   [0x86] = movAddrToDir, movAddrToDir,
   [0x88] = movRegToDir,movRegToDir,movRegToDir,movRegToDir,
            movRegToDir,movRegToDir,movRegToDir,movRegToDir,
-  [0xf5] = movAccToDir,
+  [0xf5] = movAToDir,
   [0x77] = movDataToAddr, movDataToAddr,
   [0xf6] = movAToAddr, movAToAddr,
   [0xa6] = movDirToAddr, movDirToAddr,
@@ -36,11 +36,21 @@ ExecuteInstruction I8051ExecutionTable[256] = {
   [0x18] = decReg, decReg, decReg, decReg, 
            decReg, decReg, decReg, decReg,
   [0x00] = nop,
+  [0x03] = rrA,
+  [0x13] = rrcA,
+  [0x23] = rlA,
+  [0x33] = rlcA,
+  [0xa4] = mulAB, 
   [0xc4] = swapA,
   [0xe4] = clrA,
   [0xf4] = cplA,
-  [0x68] = xrlReg, xrlReg, xrlReg, xrlReg, 
-           xrlReg, xrlReg, xrlReg, xrlReg,
+  [0x62] = xrlAToDir,
+  [0x63] = xrlDataToDir,
+  [0x64] = xrlDataToA,
+  [0x65] = xrlDirToA,
+  [0x66] = xrlAddrToA,xrlAddrToA,
+  [0x68] = xrlRegToA, xrlRegToA, xrlRegToA, xrlRegToA, 
+           xrlRegToA, xrlRegToA, xrlRegToA, xrlRegToA,
   [0x24] = addDataToA,
   [0x25] = addDirToA,
   [0x26] = addAddrToA,addAddrToA,
@@ -51,6 +61,13 @@ ExecuteInstruction I8051ExecutionTable[256] = {
   [0x96] = subbAddrToA, subbAddrToA,
   [0x98] = subbRegToA,subbRegToA,subbRegToA,subbRegToA,
            subbRegToA,subbRegToA,subbRegToA,subbRegToA,
+  [0x42] = orlAToDir,
+  [0x43] = orlDataToDir,
+  [0x44] = orlDataToA,
+  [0x45] = orlDirToA,
+  [0x46] = orlAddrToA,orlAddrToA,
+  [0x48] = orlRegToA,orlRegToA,orlRegToA,orlRegToA,
+           orlRegToA,orlRegToA,orlRegToA,orlRegToA,
   [0x52] = anlAToDir,
   [0x53] = anlDataToDir,
   [0x54] = anlDataToA, 
@@ -58,13 +75,18 @@ ExecuteInstruction I8051ExecutionTable[256] = {
   [0x56] = anlAddrToA, anlAddrToA, 
   [0x58] = anlRegtoA,anlRegtoA,anlRegtoA,anlRegtoA,
            anlRegtoA,anlRegtoA,anlRegtoA,anlRegtoA,
+  [0x10] = ljmp,
+  [0x40] = jc,
+  [0x50] = jnc,
+  [0x60] = jz,
+  [0x70] = jnz,
   
-   
-
+  [0x80] = sjmp, 
+  
 };
 
 //initialize Program Counter to 0
-int pc = 0;
+uint16_t pc = 0;
 
 /*
   *lower half of RAM is accessible through indirect accessing mode or
@@ -192,14 +214,14 @@ void mov()
   pc += 1;
 }
 
-void movDataToAcc()
+void movDataToA()
 {
   uint8_t *codePtr = &codeMemory[pc];
   acc = codePtr[1];
   pc += 2;
 }
 
-void movAccToReg()
+void movAToReg()
 {
   uint8_t *codePtr = &codeMemory[pc];
   r(*codePtr & 7) = acc;
@@ -220,7 +242,7 @@ void movDataToReg()
    pc += 2;
 }
 
-void movAccToDir()
+void movAToDir()
 {
   uint8_t *codePtr = &codeMemory[pc]; 
   writeToMemory(codePtr[1], DIRECT_ADDRESSING, acc);
@@ -393,11 +415,52 @@ void cplA()
   pc += 1;
 }
 
-void xrlReg()
+void xrlDataToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  acc = acc ^ codePtr[1];
+  pc += 2;
+}
+
+void xrlDirToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int dataLocation = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  acc = acc ^ dataLocation;
+  pc += 2;  
+}
+
+void xrlRegToA()
 {
   uint8_t *codePtr = &codeMemory[pc];
   acc = (acc ^ (r(*codePtr & 7)));
   pc += 1;
+}
+
+void xrlAddrToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int readData = readFromMemory(r(codePtr[0] & 1), INDIRECT_ADDRESSING);
+  acc = acc ^ readData;
+  pc += 1;
+}
+
+void xrlAToDir()
+{
+  uint8_t *codePtr = &codeMemory[pc]; 
+  int dataLocation = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  dataLocation = dataLocation ^ acc;
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, dataLocation); 
+  pc += 2;
+}
+
+void xrlDataToDir()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int dataLocation = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  dataLocation = dataLocation ^ codePtr[2];
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, dataLocation); 
+  pc += 3;
 }
 
 void addRegToA()
@@ -521,4 +584,154 @@ void anlDataToDir()
   dataLocation = dataLocation & codePtr[2];
   writeToMemory(codePtr[1], DIRECT_ADDRESSING, dataLocation);
   pc += 3;
+}
+
+void orlRegToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  acc = acc | r(*codePtr & 7);
+  pc += 1; 
+}
+void orlDirToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int dataLocation = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  acc = acc | dataLocation;
+  pc += 2;
+}
+
+void orlDataToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  acc = acc | codePtr[1];
+  pc += 2;
+}
+
+void orlAddrToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int readData = readFromMemory(r(codePtr[0] & 1), INDIRECT_ADDRESSING);
+  acc = acc | readData;
+  pc += 1;
+}
+
+void orlAToDir()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int dataLocation = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  dataLocation = dataLocation | acc;
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, dataLocation);
+  pc += 2;
+}
+
+void orlDataToDir()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int dataLocation = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  dataLocation = dataLocation | codePtr[2];
+  writeToMemory(codePtr[1], DIRECT_ADDRESSING, dataLocation);
+  pc += 3;
+}
+
+void mulAB()
+{
+  uint16_t result;
+  uint8_t *codePtr = &codeMemory[pc];
+  result = (uint16_t)acc * B;
+  acc = (uint8_t)result;
+  B = (uint8_t)(result >> 8);
+  status.CY = 0;
+  status.OV = 1;
+  pc += 1;
+}
+
+// acc << n | acc >> 8(bit)-n
+void rlA()
+{
+  uint8_t result;
+  uint8_t *codePtr = &codeMemory[pc];
+  acc = acc << 1 | acc >> 8-1;
+  pc += 1;
+}
+
+void rlcA()
+{
+  uint8_t result;
+  uint8_t *codePtr = &codeMemory[pc];
+  int storeFlag = status.CY;
+  status.CY = (acc & 0x80) >> 7;
+  acc = acc << 1 | storeFlag;
+  pc += 1;
+}
+
+void rrA()
+{
+  uint8_t result;
+  uint8_t *codePtr = &codeMemory[pc];
+  acc = acc >> 1 | acc << 8-1;
+  pc += 1;
+}
+
+void rrcA()
+{
+  uint8_t result;
+  uint8_t *codePtr = &codeMemory[pc];
+  int storeFlag = status.CY;
+  status.CY = acc & 0x01;
+  acc = acc >> 1 | (storeFlag << 7);
+  pc += 1;
+}
+
+void sjmp()
+{
+  int8_t *codePtr = &codeMemory[pc];
+  pc = pc + codePtr[1] + 2;
+}
+
+void ljmp()
+{
+  int8_t *codePtr = &codeMemory[pc];
+  pc = (codePtr[1] << 8) | codePtr[2];
+}
+
+void jz()
+{
+  int8_t *codePtr = &codeMemory[pc];
+  if(acc == 0) {
+    pc = pc + 2 + codePtr[1];
+  }else {
+    pc += 2;
+  }
+}
+
+void jnz()
+{
+  int8_t *codePtr = &codeMemory[pc];
+  if(acc != 0) {
+    pc = pc + 2 + codePtr[1];
+  }else {
+    pc += 2;
+  }
+}
+
+void jnc()
+{
+  int8_t *codePtr = &codeMemory[pc];
+  if(status.CY == 0) {
+    pc = pc + 2 + codePtr[1];
+  }else {
+    pc += 2;
+  }
+}
+
+void jc()
+{
+  int8_t *codePtr = &codeMemory[pc];
+  if(status.CY == 1) {
+    pc = pc + 2 + codePtr[1];
+  }else {
+    pc += 2;
+  }
+  
+  
 }
