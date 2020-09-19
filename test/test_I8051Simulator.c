@@ -567,7 +567,7 @@ void test_DEC_A_given_A_value_65H_expect_value_of_A_MINUS1_to_64H(void)
   //run code under test 
   executeInstruction();
   //code output test
-  TEST_ASSERT_EQUAL(0x64, acc);
+  TEST_ASSERT_EQUAL_HEX8(0x64, acc);
   TEST_ASSERT_EQUAL_PTR(0x304 + 1, pc);
 }
 
@@ -587,8 +587,7 @@ void test_DEC_R5_given_R5_value_55H_expect_value_of_R5_MINUS1_to_54H(void)
   //run code under test 
   executeInstruction();
   //code output test
-  TEST_ASSERT_EQUAL(0, acc);
-  TEST_ASSERT_EQUAL(0x54, ram[0x15]);
+  TEST_ASSERT_EQUAL_HEX8(0x54, ram[0x15]);
   TEST_ASSERT_EQUAL_PTR(0x0305 + 1, pc);
 }
 
@@ -606,8 +605,7 @@ void test_INC_16H_given_16H_value_44H_expect_value_of_location_16H_MINUS1_to_43H
   //run code under test 
   executeInstruction();
   //code output test
-  TEST_ASSERT_EQUAL(0, acc);
-  TEST_ASSERT_EQUAL(0x43, ram[0x16]);
+  TEST_ASSERT_EQUAL_HEX8(0x43, ram[0x16]);
   TEST_ASSERT_EQUAL_PTR(0x0306 + 2, pc);
 }
 
@@ -630,8 +628,7 @@ void test_DEC_addressR1_given_addressR1_value_72H_expect_value_of_addressR1_MINU
   //run code under test
   executeInstruction();
   //code output test
-  TEST_ASSERT_EQUAL(0, acc);
-  TEST_ASSERT_EQUAL(0x91, r(1));
+  TEST_ASSERT_EQUAL_HEX8(0x91, r(1));
   TEST_ASSERT_EQUAL_PTR(0x0307 + 1, pc); 
 }
 
@@ -849,6 +846,33 @@ void test_MUL_A_B_given_A_value_54H_and_B_value_A3H_expect_values_A_multiply_B_p
   TEST_ASSERT_EQUAL_PTR(0x0210 + 1, pc);
 }
 
+// DIV AB 
+// A = FBH, B = 12H
+// A / B = 0D11H
+void test_DIV_AB_given_A_value_FBH_and_B_value_12H_expect_values_A_divide_B_product_result_0D11H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x84};
+  //setup acc a value 
+  acc = 0xfb;
+  //setup B a value 
+  B = 0x12;
+  //setup CY to 1 
+  status.CY = 1;
+  //setup OV to 1 
+  status.OV = 1;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0211);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x0d, acc);
+  TEST_ASSERT_EQUAL_HEX8(0x11, B);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL(0, status.OV);
+  TEST_ASSERT_EQUAL_PTR(0x0211 + 1, pc);
+}
+
 // XRL A,R2
 void test_XRL_A_R2_given_R2_value_15H_and_A_value_24H_expect_value_of_R2_XOR_A(void)
 {
@@ -1054,6 +1078,150 @@ void test_ADD_A_addressR0_given_addressR0_value_plus34_and_A_plus55_expect_addre
   TEST_ASSERT_EQUAL_PTR(0x503 + 1, pc);
 }
 
+// ADDC A,R4
+void test_ADDC_A_R4_given_A_value_C3H_R4_value_AAH_expect_values_A_plus_R4_where_CY_and_OV_set_1_AC_0_result_6EH_CY_1_OV_1_AC_0(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x3c};
+  //setup acc a value
+  acc = 0xc3;
+  //setup CY to 1
+  status.CY = 1;
+  //setup OV to 0 
+  status.OV = 0;
+  //setup AC t0 0 
+  status.AC = 0;
+  //set R4 10 (Bank2) bits D4 & D3 shift left 3 times
+  psw = 2 << 3;
+  //assign a value to R4
+  ram[0x14] = 0xaa;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0509);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x6e, acc);
+  TEST_ASSERT_EQUAL(0, status.AC);
+  TEST_ASSERT_EQUAL(1, status.OV);
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0509 + 1, pc); 
+}
+
+// ADDC A,R4
+void test_ADDC_A_R4_given_A_value_55H_R4_value_2H_expect_values_A_plus_R4_where_CY_0_AC_0_OV_0_result_57H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x3c};
+  //setup acc a value
+  acc = 0x55;
+  //setup CY 
+  status.CY = 0;
+  //setup OV 
+  status.OV = 0;
+  //setup AC  
+  status.AC = 0;
+  //set R4 10 (Bank2) bits D4 & D3 shift left 3 times
+  psw = 2 << 3;
+  //assign a value to R4
+  ram[0x14] = 0x02;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0510);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x57, acc);
+  TEST_ASSERT_EQUAL(0, status.AC);
+  TEST_ASSERT_EQUAL(0, status.OV);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0510 + 1, pc); 
+}
+
+// ADDC A,11H 
+void test_ADDC_A_11H_given_location11H_value_B2H_and_A_value_DDH_expect_values_A_plus_location11H_CY_1_OV_0_AC_0_result_90H_CY_1(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x35, 0x11};
+  //setup acc a value
+  acc = 0xdd;
+  //setup RAM location 
+  ram[0x11] = 0xb2;
+  //setup CY 
+  status.CY = 1;
+  //setup OV
+  status.OV = 0;
+  //setup AC 
+  status.AC = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0511);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x90, acc);
+  TEST_ASSERT_EQUAL(0, status.AC);
+  TEST_ASSERT_EQUAL(0, status.OV);
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0511 + 2, pc);  
+}
+
+// ADDC A, #CCH
+void test_ADDC_A_hashCCH_given_A_value_77H_expect_values_A_plus_hashCCH_CY_1_OV_0_AC_0_result_44H_CY_1_AC_1(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x34, 0xcc};
+  //setup acc a value
+  acc = 0x77;
+  //setup CY 
+  status.CY = 1;
+  //setup OV
+  status.OV = 0;
+  //setup AC 
+  status.AC = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0512);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x44, acc);
+  TEST_ASSERT_EQUAL(1, status.AC);
+  TEST_ASSERT_EQUAL(0, status.OV);
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x0512 + 2, pc);
+}
+
+// ADDC A,@R1 
+void test_ADDC_A_addressR1_given_addressR1_value_ADH_and_A_value_89H_expect_values_addressR1_plus_A_CY_1_OV_0_AC_0_result_37H_CY_1_OV_1_AC_1(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x37};
+  //setup acc a value
+  acc = 0x89;
+  //RAM location 
+  ram[0xa5] = 0xad;
+  sfr[0xa5] = 0;
+  //setup CY
+  status.CY = 1;
+  //setup OV
+  status.OV = 0;
+  //setup AC 
+  status.AC = 0;
+  //set R1 10 (Bank2) bits D4 & D3 shift left 3 times
+  psw = 2 << 3;
+  //test setup calling the address 
+  r(1) = 0xa5;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0513);
+  //run code under test 
+  executeInstruction();
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x37, acc);
+  TEST_ASSERT_EQUAL(1, status.AC);
+  TEST_ASSERT_EQUAL(1, status.OV);
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL(0xa5, r(1));
+  TEST_ASSERT_EQUAL_PTR(0x513 + 1, pc); 
+}
+
+
 /* A = -127-0-(-3) = -124
 // 127 => 0111 1111
 //        1000 0000
@@ -1225,7 +1393,7 @@ void test_ANL_A_R3_given_R3_55H_and_A_C3H_expect_values_R3_logicalAND_A(void)
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0x41, acc);
+  TEST_ASSERT_EQUAL_HEX8(0x41, acc);
   TEST_ASSERT_EQUAL_PTR(0x0600 + 1, pc);
 }
 
@@ -1243,7 +1411,7 @@ void test_ANL_A_14H_given_A_4FH_and_location_14H_value_62H_expect_values_locatio
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0x42, acc);
+  TEST_ASSERT_EQUAL_HEX8(0x42, acc);
   TEST_ASSERT_EQUAL_PTR(0x0601 + 2, pc);
 }
 
@@ -1259,7 +1427,7 @@ void test_ANL_A_hash3AH_given_data_hash3AH_and_A_value_C3H_expect_values_hash3AH
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0x2a, acc);
+  TEST_ASSERT_EQUAL_HEX8(0x2a, acc);
   TEST_ASSERT_EQUAL_PTR(0x0602 + 2, pc);
 }
 
@@ -1282,7 +1450,7 @@ void test_ANL_A_addressR0_given_addressR0_value_63H_and_A_value_21H_expect_value
   //run code under test 
   executeInstruction();
   //code test output
-  TEST_ASSERT_EQUAL(0x21,acc);
+  TEST_ASSERT_EQUAL_HEX8(0x21,acc);
   TEST_ASSERT_EQUAL(0xe4, r(0));
   TEST_ASSERT_EQUAL_PTR(0x603 + 1, pc);
 }
@@ -1300,7 +1468,7 @@ void test_1CH_A_given_A_value_65H_and_location_1CH_79H_expect_values_A_logicalAN
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0x61, ram[0x1c]);
+  TEST_ASSERT_EQUAL_HEX8(0x61, ram[0x1c]);
   TEST_ASSERT_EQUAL_PTR(0x0604 + 2, pc);
 }
 
@@ -1318,73 +1486,73 @@ void test_1DH_hash55H_given_1DH_value_C3H_expect_hash55H_logicalAND_location_1DH
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0x21, ram[0x1d]);
+  TEST_ASSERT_EQUAL_HEX8(0x21, ram[0x1d]);
   TEST_ASSERT_EQUAL_PTR(0x0605 + 3, pc);
 }
 
 // ORL A,R5
-void test_ORL_A_R5_given_R5_value_55H_and_A_value_C3H_expect_values_R5_logicalOR_A(void)
+void test_ORL_A_R5_given_R5_value_44H_and_A_value_56H_expect_values_R5_logicalOR_A(void)
 {
   //test setup fixture
   uint8_t machineCode[] = {0x4d};
   //assign acc a value 
-  acc = 0xc3;
+  acc = 0x56;
   //set R3 10(bank2) bitwise D3 & D4 
   psw = 2 << 3;
   //assign value in R2 
-  ram[0x15] = 0x55;
+  ram[0x15] = 0x44;
   //copy codeMemory
   copyCodeToCodeMemory(machineCode, pc = 0x0700);
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0xd7, acc);
+  TEST_ASSERT_EQUAL_HEX8(0x56, acc);
   TEST_ASSERT_EQUAL_PTR(0x0700 + 1, pc);
 }
 
 // ORL A,16H
-void test_ORL_A_16H_given_location_16H_value_55H_and_A_value_C3H_expect_values_of_location_16H_logicalOR_A(void)
+void test_ORL_A_16H_given_location_16H_value_AAH_and_A_value_74H_expect_values_of_location_16H_logicalOR_A(void)
 {
   //test setup fixture
   uint8_t machineCode[] = {0x45, 0x16};
   //assign acc a value 
-  acc = 0xc3;
+  acc = 0x74;
   //assign value to location 14H
-  ram[0x16] = 0x55;
+  ram[0x16] = 0xaa;
   //copy codeMemory
   copyCodeToCodeMemory(machineCode, pc = 0x0701);
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0xd7, acc);
+  TEST_ASSERT_EQUAL_HEX8(0xfe, acc);
   TEST_ASSERT_EQUAL_PTR(0x0701 + 2, pc); 
 }
 
-// ORL A,#55H
-void test_ORL_A_hash55H_given_A_value_C3H_expect_value_hash55H_logicalOR_A(void)
+// ORL A,#88H
+void test_ORL_A_hash88H_given_A_value_C3H_expect_value_hash88H_logicalOR_A(void)
 {
   //test setup fixture
-  uint8_t machineCode[] = {0x44, 0x55};
+  uint8_t machineCode[] = {0x44, 0x88};
   //assign acc a value 
-  acc = 0xc3;
+  acc = 0x99;
   //copy codeMemory
   copyCodeToCodeMemory(machineCode, pc = 0x0702);
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0xd7, acc);
+  TEST_ASSERT_EQUAL_HEX8(0x99, acc);
   TEST_ASSERT_EQUAL_PTR(0x0702 + 2, pc); 
 }
 
 // ORL A,@R0
-void test_ORL_A_addressR0_given_addressR0_value_55H_and_A_value_C3H_expect_values_of_addressR0_logicalOR_A(void)
+void test_ORL_A_addressR0_given_addressR0_value_55H_and_A_value_27H_expect_values_of_addressR0_logicalOR_A(void)
 {
   //test setup fixture
   uint8_t machineCode[] = {0x46};
   //setup acc a value
-  acc = 0xc3;
+  acc = 0x27;
   //RAM location 
-  ram[0xe8] = 0x55;
+  ram[0xe8] = 0x77;
   sfr[0xe8] = 0;
   //set R0 10 (Bank2) bits D4 & D3 shift left 3 times
   psw = 2 << 3;
@@ -1395,44 +1563,44 @@ void test_ORL_A_addressR0_given_addressR0_value_55H_and_A_value_C3H_expect_value
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0xd7, acc);
+  TEST_ASSERT_EQUAL_HEX8(0x77, acc);
   TEST_ASSERT_EQUAL(0xe8, r(0));
   TEST_ASSERT_EQUAL_PTR(0x703 + 1, pc);
 }
 
 // ORL 1AH,A
-void test_1AH_A_given_A_value_55H_and_location_1CH_C3H_expect_values_A_logicalOR_location_1CH(void)
+void test_1AH_A_given_A_value_10H_and_location_1AH_5BH_expect_values_A_logicalOR_location_1CH(void)
 {
   //test setup fixture
   uint8_t machineCode[] = {0x42, 0x1a};
   //setup acc a value 
-  acc = 0x55;
+  acc = 0x10;
   //assign value to location 1CH
-  ram[0x1a] = 0xc3;
+  ram[0x1a] = 0x5b;
   //copy codeMemory
   copyCodeToCodeMemory(machineCode, pc = 0x0704);
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0xd7, ram[0x1a]);
+  TEST_ASSERT_EQUAL_HEX8(0x5b, ram[0x1a]);
   TEST_ASSERT_EQUAL_PTR(0x0704 + 2, pc);
 }
 
-// ORL 11H,#55H
-void test_11H_hash55H_given_location_11H_value_C3H_expect_hash55H_logicalOR_location_11H(void)
+// ORL 11H,#FBH
+void test_11H_hashFBH_given_location_11H_value_ACH_expect_hashFBH_logicalOR_location_11H(void)
 {
   //test setup fixture
-  uint8_t machineCode[] = {0x43, 0x11, 0x55};
+  uint8_t machineCode[] = {0x43, 0x11, 0xfb};
   //setup acc to 0 
   acc = 0;
   //assign value to location 1DH 
-  ram[0x11] = 0xc3;
+  ram[0x11] = 0xac;
   //copy codeMemory
   copyCodeToCodeMemory(machineCode, pc = 0x0705);
   //run code under test 
   executeInstruction();
   //code test output 
-  TEST_ASSERT_EQUAL(0xd7, ram[0x11]);
+  TEST_ASSERT_EQUAL_HEX8(0xff, ram[0x11]);
   TEST_ASSERT_EQUAL_PTR(0x0705 + 3, pc);
 }
 
@@ -1593,4 +1761,76 @@ void test_JNC_44_expect_not_JMP_when_carry_is_not_set(void)
   executeInstruction();
   TEST_ASSERT_EQUAL(0, status.CY);
   TEST_ASSERT_EQUAL_UINT16(0x2012 + 2, pc);
+}
+
+// DA A 
+void test_DA_A_given_A_value_34H_and_data_37H_expect_value_A_plus_data_37H_is_71H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x24,0x37,   // ADD A,#37H
+                           0xd4};       // DA A
+  //setup acc a value 
+  acc = 0x34;
+  //setup AC to 0 
+  status.AC = 0;
+  //setup CY to 0 
+  status.CY = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x5000);
+  //run code under test 
+  executeInstruction();               // ADD A,#37H
+  executeInstruction();               // DA A
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x71, acc);
+  TEST_ASSERT_EQUAL(0, status.AC);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x5000 + 3, pc);
+}
+
+// DA A 
+void test_DA_A_given_A_value_28H_and_data_29H_expect_value_A_plus_data_29H_is_57H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x24,0x29,   // ADD A,#29H
+                           0xd4};       // DA A
+  //setup acc a value 
+  acc = 0x28;
+  //setup AC to 0 
+  status.AC = 1;
+  //setup CY to 0 
+  status.CY = 0;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x5001);
+  //run code under test 
+  executeInstruction();               // ADD A,#29H
+  executeInstruction();               // DA A
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x57, acc);
+  TEST_ASSERT_EQUAL(1, status.AC);
+  TEST_ASSERT_EQUAL(0, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x5001 + 3, pc);
+}
+
+// DA A 
+void test_DA_A_given_A_value_44H_and_data_64H_expect_value_A_plus_data_64H_is_108H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x24,0x64,   // ADD A,#44H
+                           0xd4};       // DA A
+  //setup acc a value 
+  acc = 0x44;
+  //setup AC to 0 
+  status.AC = 0;
+  //setup CY to 0 
+  status.CY = 1;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x5002);
+  //run code under test 
+  executeInstruction();               // ADD A,#29H
+  executeInstruction();               // DA A
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x108, acc);
+  TEST_ASSERT_EQUAL(0, status.AC);
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x5002 + 3, pc);
 }

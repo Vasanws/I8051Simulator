@@ -40,6 +40,7 @@ ExecuteInstruction I8051ExecutionTable[256] = {
   [0x13] = rrcA,
   [0x23] = rlA,
   [0x33] = rlcA,
+  [0x84] = divAB,
   [0xa4] = mulAB, 
   [0xc4] = swapA,
   [0xe4] = clrA,
@@ -56,6 +57,11 @@ ExecuteInstruction I8051ExecutionTable[256] = {
   [0x26] = addAddrToA,addAddrToA,
   [0x28] = addRegToA, addRegToA, addRegToA, addRegToA,
            addRegToA, addRegToA, addRegToA, addRegToA,
+  [0x34] = addCDataToA,
+  [0x35] = addCDirToA,
+  [0x36] = addCAddrToA,addCAddrToA,
+  [0x38] = addCRegToA,addCRegToA,addCRegToA,addCRegToA,
+           addCRegToA,addCRegToA,addCRegToA,addCRegToA,
   [0x94] = subbDataToA,
   [0x95] = subbDirToA,
   [0x96] = subbAddrToA, subbAddrToA,
@@ -80,8 +86,9 @@ ExecuteInstruction I8051ExecutionTable[256] = {
   [0x50] = jnc,
   [0x60] = jz,
   [0x70] = jnz,
-  
   [0x80] = sjmp, 
+  [0xd4] = daA,
+  
   
 };
 
@@ -145,9 +152,11 @@ uint8_t readFromMemory(int address, AccessMode mode)
 uint8_t sum(uint32_t val1, uint32_t val2)
 {
   uint32_t val3 = val1 + val2;
+  uint32_t val4 = ((val1 & 0x0f) + (val2 & 0x0f));
   psw = psw & 0x7f;
   psw = ((val3 >> 1) & 0x80) | psw;
-  return (uint8_t)val3;
+  psw = ((val4 << 2 ) & 0x40) | psw;
+  return (uint8_t)(val3);
 }
 
 //subtract function 
@@ -175,6 +184,22 @@ void dataPointer(uint8_t val1, uint8_t val2)
   DPL = val2;
 }
 
+//Decimal-Adjust Acc 
+uint8_t decimalAdjust(uint32_t val1)
+{
+  uint32_t val3 = (val1 & 0x0f);
+  uint32_t val4 = (val1 & 0xf0);
+  if(val3 > 9 | status.AC == 1) {
+    val3 += 6;
+  }
+  if(val4 > 0x90 | status.CY == 1){
+    val4 += 0x60;
+  }
+  if(val4 & 0x100) {
+    status.CY = 1;
+  }
+  return (uint8_t)(val3 + val4);
+}
 /*
  * 0xeb = 1110 1rrr
  * bit number 3 of 0xeb
@@ -501,6 +526,46 @@ void addAddrToA()
   pc += 1;
 }
 
+void addCRegToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int regR = r(*codePtr & 7); 
+  int result = sum(acc, regR);
+  handleOverFlow(acc, regR, result);
+  acc = result + status.CY;
+  pc += 1;
+}
+
+void addCDirToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int readData = readFromMemory(codePtr[1], DIRECT_ADDRESSING);
+  int result = sum(acc, readData);
+  handleOverFlow(acc, readData, result);
+  acc = result + status.CY;
+  pc += 2;
+}
+
+void addCDataToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int result = sum(acc, codePtr[1]);
+  handleOverFlow(acc, codePtr[1], result);
+  acc = result + status.CY;
+  pc += 2;
+}
+
+void addCAddrToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int addrData = r(codePtr[0] & 1);
+  int readData = readFromMemory(addrData, INDIRECT_ADDRESSING);
+  int result = sum(acc, readData);
+  handleOverFlow(acc, readData, result);
+  acc = result + status.CY; 
+  pc += 1;
+}
+
 void subbRegToA()
 {
   uint8_t *codePtr = &codeMemory[pc];
@@ -633,6 +698,18 @@ void orlDataToDir()
   pc += 3;
 }
 
+void divAB()
+{
+  uint16_t result;
+  uint8_t *codePtr = &codeMemory[pc];
+  result = (uint16_t)acc / B;
+  B = acc % B;
+  acc = (uint8_t)result;
+  status.OV = 0;
+  status.CY = 0;
+  pc += 1;
+}
+
 void mulAB()
 {
   uint16_t result;
@@ -732,6 +809,11 @@ void jc()
   }else {
     pc += 2;
   }
-  
-  
+}
+
+void daA()
+{
+  int8_t *codePtr = &codeMemory[pc];
+  acc = decimalAdjust(acc);
+  pc += 1;
 }
