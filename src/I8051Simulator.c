@@ -6,6 +6,7 @@
 
 ExecuteInstruction I8051ExecutionTable[256] = {
   [0x74] = movDataToA,
+  [0xe2] = movXAddrToA,movXAddrToA,
   [0xe5] = mov,
   [0xe6] = mov, mov,
   [0xe8] = mov, mov, mov, mov, mov, mov, mov, mov,
@@ -92,7 +93,7 @@ ExecuteInstruction I8051ExecutionTable[256] = {
   
 };
 
-//initialize Program Counter to 0
+// initialize Program Counter to 0
 uint16_t pc = 0;
 
 /*
@@ -108,10 +109,10 @@ uint8_t ram[256];
 */
 uint8_t sfr[256];
 
-//External RAM
+// External RAM
 uint8_t xram[0x10000];
 
-//codeMemory
+// codeMemory
 uint8_t codeMemory[0x10000]; //64KB
 
 
@@ -122,7 +123,7 @@ void executeInstruction()
   executor();
 }
 
-//writeToMemory
+// writeToMemory
 void writeToMemory(int address, AccessMode mode, uint8_t data) 
 { 
   if(address > 127) {
@@ -135,7 +136,7 @@ void writeToMemory(int address, AccessMode mode, uint8_t data)
   }
 }
 
-//readFromMemory
+// readFromMemory
 uint8_t readFromMemory(int address, AccessMode mode)
 {
   if(address > 127) {
@@ -148,7 +149,16 @@ uint8_t readFromMemory(int address, AccessMode mode)
   }
 }
 
-//sum function 
+// readFromXternalMemory
+uint8_t readFromXternalMemory(int address, AccessMode mode)
+{
+  if(address > 127) {
+    if(mode == INDIRECT_ADDRESSING)
+      return xram[address];
+  } 
+}
+
+// sum function 
 uint8_t sum(uint32_t val1, uint32_t val2)
 {
   uint32_t val3 = val1 + val2;
@@ -159,7 +169,7 @@ uint8_t sum(uint32_t val1, uint32_t val2)
   return (uint8_t)(val3);
 }
 
-//subtract function 
+// subtract function 
 uint8_t substract(uint32_t val1, uint32_t val2)
 {
   uint32_t val3 = val1 - val2;
@@ -168,7 +178,7 @@ uint8_t substract(uint32_t val1, uint32_t val2)
   return (uint8_t)val3;
 }
 
-//handle overflow function
+// handle overflow function
 void handleOverFlow(uint32_t val1, uint32_t val2, uint32_t result)
 {
   psw = psw & 0xfb;
@@ -177,14 +187,14 @@ void handleOverFlow(uint32_t val1, uint32_t val2, uint32_t result)
         | psw;
 }
 
-//Data Pointer
+// Data Pointer
 void dataPointer(uint8_t val1, uint8_t val2)
 {
   DPH = val1;
   DPL = val2;
 }
 
-//Decimal-Adjust Acc 
+// Decimal-Adjust Acc 
 uint8_t decimalAdjust(uint32_t val1)
 {
   uint32_t val3 = (val1 & 0x0f);
@@ -334,6 +344,14 @@ void movDataTodptr()
   uint8_t *codePtr = &codeMemory[pc];
   dataPointer(codePtr[1], codePtr[2]);
   pc += 3;
+}
+
+void movXAddrToA()
+{
+  uint8_t *codePtr = &codeMemory[pc];
+  int xternalData = xr(codePtr[0] & 1);
+  acc = readFromXternalMemory(xternalData, INDIRECT_ADDRESSING);
+  pc += 1;
 }
 
 void clrA() 

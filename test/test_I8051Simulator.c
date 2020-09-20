@@ -192,25 +192,25 @@ void test_MOV_0FH_A_given_0FH_value_1CH_expect_value_of_location_0FH_mov_to_A(vo
 // MOV A,@R1
 void test_MOV_addressR1_A_given_addressR1_value_21H_expect_value_of_addressR1_mov_to_A(void)
 { 
-    //setup test fixture
-    uint8_t machineCode[] = {0xe7}; 
-    //setup acc to 0
-    acc = 0;  
-    //assign val 0x21(33) to RAM location
-    ram[0x89] = 0x21;
-    sfr[0x89] = 0;
-    //set psw 01 (Bank1) bits of D4 & D3 shift left 3 times
-    psw = 1 << 3;       
-    //test setup calling the address 
-    r(1) = 0x89;
-    //copy codeMemory
-    copyCodeToCodeMemory(machineCode, pc = 0x0103);
-    //run code under test
-    executeInstruction();
-    //code output test
-    TEST_ASSERT_EQUAL(0x21, acc);
-    TEST_ASSERT_EQUAL(0x89, r(1));
-    TEST_ASSERT_EQUAL_PTR(0x0103 + 1, pc);   
+  //setup test fixture
+  uint8_t machineCode[] = {0xe7}; 
+  //setup acc to 0
+  acc = 0;  
+  //assign val 0x21(33) to RAM location
+  ram[0x89] = 0x21;
+  sfr[0x89] = 0;
+  //set psw 01 (Bank1) bits of D4 & D3 shift left 3 times
+  psw = 1 << 3;       
+  //test setup calling the address 
+  r(1) = 0x89;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0103);
+  //run code under test
+  executeInstruction();
+  //code output test
+  TEST_ASSERT_EQUAL(0x21, acc);
+  TEST_ASSERT_EQUAL(0x89, r(1));
+  TEST_ASSERT_EQUAL_PTR(0x0103 + 1, pc);   
 }
 
 // MOV A,#22H
@@ -489,6 +489,31 @@ void test_MOV_DPTR_hash1234H_given_data_hash1234H_expect_data_mov_to_DPTR_DH_hol
   TEST_ASSERT_EQUAL_INT8(0x34, DPL);
   TEST_ASSERT_EQUAL_PTR(0, acc);
   TEST_ASSERT_EQUAL_PTR(0x0116 + 3, pc);
+}
+
+// MOVX A,@R1 
+void test_MOVX_A_addressR1_given_addressR1_value_76H_expect_value_addressR1_external_RAM_mov_to_A(void)
+{
+  //setup test fixture
+  uint8_t machineCode[] = {0xe3}; 
+  //setup acc to 0
+  acc = 0;  
+  //assign value to XRAM location
+  xram[0x99] = 0x76;
+  ram[0x99] = 0;
+  sfr[0x99] = 0;
+  //set psw 01 (Bank1) bits of D4 & D3 shift left 3 times
+  psw = 1 << 3;       
+  //test setup calling the address 
+  xr(1) = 0x99;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x0117);
+  //run code under test
+  executeInstruction();
+  //code output test
+  TEST_ASSERT_EQUAL_HEX8(0x21, acc);
+  TEST_ASSERT_EQUAL(0x99, xr(1));
+  TEST_ASSERT_EQUAL_PTR(0x0117 + 1, pc);
 }
 
 // INC R6

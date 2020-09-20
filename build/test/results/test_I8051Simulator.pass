@@ -107,272 +107,276 @@
   :line: 474
   :message: ''
   :unity_test_time: 0
-- :test: test_INC_R6_given_R6_value_45H_expect_value_of_R6_plus1_to_46H
+- :test: test_MOVX_A_addressR1
   :line: 495
   :message: ''
   :unity_test_time: 0
+- :test: test_INC_R6_given_R6_value_45H_expect_value_of_R6_plus1_to_46H
+  :line: 520
+  :message: ''
+  :unity_test_time: 0
 - :test: test_INC_17H_given_17H_value_54H_expect_value_of_location_17H_plus1_to_55H
-  :line: 516
+  :line: 541
   :message: ''
   :unity_test_time: 0
 - :test: test_INC_addressR1_given_addressR1_value_67H_expect_value_of_addressR1_plus1_to_68H
-  :line: 535
+  :line: 560
   :message: ''
   :unity_test_time: 0
 - :test: test_DEC_A_given_A_value_65H_expect_value_of_A_MINUS1_to_64H
-  :line: 559
+  :line: 584
   :message: ''
   :unity_test_time: 0
 - :test: test_DEC_R5_given_R5_value_55H_expect_value_of_R5_MINUS1_to_54H
-  :line: 575
+  :line: 600
   :message: ''
   :unity_test_time: 0
 - :test: test_INC_16H_given_16H_value_44H_expect_value_of_location_16H_MINUS1_to_43H
-  :line: 595
+  :line: 620
   :message: ''
   :unity_test_time: 0
 - :test: test_DEC_addressR1_given_addressR1_value_72H_expect_value_of_addressR1_MINUS1_to_76H
-  :line: 613
+  :line: 638
   :message: ''
   :unity_test_time: 0
 - :test: test_CLR_A_given_A_value_22H_expect_value_of_A_is_clear
-  :line: 636
+  :line: 661
   :message: ''
   :unity_test_time: 0
 - :test: test_NOP_to_perform_a_skip
-  :line: 652
+  :line: 677
   :message: ''
   :unity_test_time: 0
 - :test: test_SWAP_A_given_A_value_6BH_expect_value_of_A_swap_to_B6H_to_A
-  :line: 668
-  :message: ''
-  :unity_test_time: 0
-- :test: test_CPL_A_given_A_value_23H_expect_value_of_A_compliment_to_DCH
   :line: 693
   :message: ''
   :unity_test_time: 0
+- :test: test_CPL_A_given_A_value_23H_expect_value_of_A_compliment_to_DCH
+  :line: 718
+  :message: ''
+  :unity_test_time: 0
 - :test: test_RL_A_given_A_value_E6H_expect_value_A_rotate_left_73H
-  :line: 709
+  :line: 734
   :message: ''
   :unity_test_time: 0
 - :test: test_RLC_A_given_A_value_E6H_expect_value_A_rotate_left_B9H_with_carry_set
-  :line: 728
+  :line: 753
   :message: ''
   :unity_test_time: 0
 - :test: test_RLC_A_given_A_value_F4H_expect_value_A_rotate_left_E9H_with_carry_set
-  :line: 747
+  :line: 772
   :message: ''
   :unity_test_time: 0
 - :test: test_RR_A_given_A_value_59H_expect_value_A_rotate_right_ACH
-  :line: 766
+  :line: 791
   :message: ''
   :unity_test_time: 0
 - :test: test_RRC_A_given_A_value_D6H_expect_value_A_rotate_right_6BH_with_carry_set
-  :line: 785
+  :line: 810
   :message: ''
   :unity_test_time: 0
 - :test: test_RRC_A_given_A_value_C4H_expect_value_A_rotate_right_H_with_carry_set
-  :line: 804
+  :line: 829
   :message: ''
   :unity_test_time: 0
 - :test: test_MUL_A_B_given_A_value_54H_and_B_value_A3H_expect_values_A_multiply_B_product_357CH
-  :line: 825
+  :line: 850
   :message: ''
   :unity_test_time: 0
 - :test: test_DIV_AB_given_A_value_FBH_and_B_value_12H_expect_values_A_divide_B_product_result_0D11H
-  :line: 852
-  :message: ''
-  :unity_test_time: 0
-- :test: test_XRL_A_R2_given_R2_value_15H_and_A_value_24H_expect_value_of_R2_XOR_A
   :line: 877
   :message: ''
   :unity_test_time: 0
+- :test: test_XRL_A_R2_given_R2_value_15H_and_A_value_24H_expect_value_of_R2_XOR_A
+  :line: 902
+  :message: ''
+  :unity_test_time: 0
 - :test: test_XRL_A_12H_given_12H_value_15H_and_A_value_24H_expect_values_of_location_12H_XOR_A
-  :line: 897
+  :line: 922
   :message: ''
   :unity_test_time: 0
 - :test: test_XRL_A_hash15H_given_A_value_0x24_expect_value_of_A_XOR_hash15H
-  :line: 915
+  :line: 940
   :message: ''
   :unity_test_time: 0
 - :test: test_XRL_A_addressR0_given_A_value_24H_and_addressR0_value_15H_expect_values_of_addressR0_XOR_A
-  :line: 931
+  :line: 956
   :message: ''
   :unity_test_time: 0
 - :test: test_XRL_14H_A_given_A_value_15H_and_location_14H_value_24H_expect_values_A_XOR_location_14H
-  :line: 955
+  :line: 980
   :message: ''
   :unity_test_time: 0
 - :test: test_XRL_13H_hash15H_given_13H_value_24H_expect_value_of_location_13H_XOR_hash15H
-  :line: 974
+  :line: 999
   :message: ''
   :unity_test_time: 0
 - :test: test_ADD_A_R3_given_R3_value_4_and_A_value_126_expect_value_R3_add_A_equal_plus130
-  :line: 992
+  :line: 1017
   :message: ''
   :unity_test_time: 0
 - :test: test_ADD_A_14H_given_A_value_plus126_and_14H_plus1_expect_value_of_location_14H_value_add_A_equal_plus127
-  :line: 1015
+  :line: 1040
   :message: ''
   :unity_test_time: 0
 - :test: test_ADD_A_given_data_plus85_and_A_plus126_expect_data_add_A_equal_plus211
-  :line: 1036
+  :line: 1061
   :message: ''
   :unity_test_time: 0
 - :test: test_ADD_A_addressR0_given_addressR0_value_plus34_and_A_plus55_expect_addressR0_add_A_equal_89
-  :line: 1055
+  :line: 1080
   :message: ''
   :unity_test_time: 0
-- :test: test_ADDC_A_R4_given_A_value_C3H_R4_value_AAH_expect_values_A_plus_R4_where_CY_and_OV_set_1_AC_0_result_6EH
-  :line: 1082
+- :test: test_ADDC_A_R4_given_A_value_C3H_R4_value_AAH_expect_values_A_plus_R4_where_CY_and_OV_set_1_AC_0_result_6EH_CY_1_OV_1_AC_0
+  :line: 1107
   :message: ''
   :unity_test_time: 0
 - :test: test_ADDC_A_R4_given_A_value_55H_R4_value_2H_expect_values_A_plus_R4_where_CY_0_AC_0_OV_0_result_57H
-  :line: 1111
+  :line: 1136
   :message: ''
   :unity_test_time: 0
 - :test: test_ADDC_A_11H_given_location11H_value_B2H_and_A_value_DDH_expect_values_A_plus_location11H_CY_1_OV_0_AC_0_result_90H_CY_1
-  :line: 1140
+  :line: 1165
   :message: ''
   :unity_test_time: 0
 - :test: test_ADDC_A_hashCCH_given_A_value_77H_expect_values_A_plus_hashCCH_CY_1_OV_0_AC_0_result_44H_CY_1_AC_1
-  :line: 1167
-  :message: ''
-  :unity_test_time: 0
-- :test: test_ADDC_A_addressR1_given_addressR1_value_ADH_and_A_value_89H_expect_values_addressR1_plus_A_CY_1_OV_0_AC_0_result_37H_CY_1_OV_1_AC_1
   :line: 1192
   :message: ''
   :unity_test_time: 0
+- :test: test_ADDC_A_addressR1_given_addressR1_value_ADH_and_A_value_89H_expect_values_addressR1_plus_A_CY_1_OV_0_AC_0_result_37H_CY_1_OV_1_AC_1
+  :line: 1217
+  :message: ''
+  :unity_test_time: 0
 - :test: test_SUBB_A_R2_given_R2_value_minus3_and_A_value_minus127_and_CY_0_expect_value_A_minus_CY_minus_R2_new_value_A_minus124
-  :line: 1247
+  :line: 1272
   :message: ''
   :unity_test_time: 0
 - :test: test_SUBB_A_R2_given_R3_value_40_and_A_value_minus110_and_CY_1_expect_value_A_minus_CY_minus_R3_new_value_A_minus151
-  :line: 1280
+  :line: 1305
   :message: ''
   :unity_test_time: 0
 - :test: test_SUBB_A_15H_given_15H_value_plus30_and_A_value_minus90_and_CY_1_expect_values_A_minus_CY_minus_location_15H_new_value_A_minus121
-  :line: 1306
+  :line: 1331
   :message: ''
   :unity_test_time: 0
 - :test: test_SUBB_A_21_given_A_value_plus119_and_CY_1_expect_value_of_A_minus_CY_1_minus_21_new_value_A_plus97
-  :line: 1330
+  :line: 1355
   :message: ''
   :unity_test_time: 0
 - :test: test_SUBB_A_addressR0_given_addressR0_value_plus126_and_A_value_minus40_CY_1_expect_value_of_A_minus_CY_1_minus_addressR0_new_value_minus167
-  :line: 1352
+  :line: 1377
   :message: ''
   :unity_test_time: 0
 - :test: test_ANL_A_R3_given_R3_55H_and_A_C3H_expect_values_R3_logicalAND_A
-  :line: 1381
+  :line: 1406
   :message: ''
   :unity_test_time: 0
 - :test: test_ANL_A_14H_given_A_4FH_and_location_14H_value_62H_expect_values_location_14H_logicalAND_A
-  :line: 1401
+  :line: 1426
   :message: ''
   :unity_test_time: 0
 - :test: test_ANL_A_hash3AH_given_data_hash3AH_and_A_value_C3H_expect_values_hash3AH_logicalAND_A
-  :line: 1419
+  :line: 1444
   :message: ''
   :unity_test_time: 0
 - :test: test_ANL_A_addressR0_given_addressR0_value_63H_and_A_value_21H_expect_values_of_addressR0_logicalAND_A
-  :line: 1435
+  :line: 1460
   :message: ''
   :unity_test_time: 0
 - :test: test_1CH_A_given_A_value_65H_and_location_1CH_79H_expect_values_A_logicalAND_location_1CH
-  :line: 1458
+  :line: 1483
   :message: ''
   :unity_test_time: 0
 - :test: test_1DH_hash55H_given_1DH_value_C3H_expect_hash55H_logicalAND_location_1DH
-  :line: 1476
+  :line: 1501
   :message: ''
   :unity_test_time: 0
 - :test: test_ORL_A_R5_given_R5_value_44H_and_A_value_56H_expect_values_R5_logicalOR_A
-  :line: 1494
+  :line: 1519
   :message: ''
   :unity_test_time: 0
 - :test: test_ORL_A_16H_given_location_16H_value_AAH_and_A_value_74H_expect_values_of_location_16H_logicalOR_A
-  :line: 1514
+  :line: 1539
   :message: ''
   :unity_test_time: 0
 - :test: test_ORL_A_hash88H_given_A_value_C3H_expect_value_hash88H_logicalOR_A
-  :line: 1532
+  :line: 1557
   :message: ''
   :unity_test_time: 0
 - :test: test_ORL_A_addressR0_given_addressR0_value_55H_and_A_value_27H_expect_values_of_addressR0_logicalOR_A
-  :line: 1548
+  :line: 1573
   :message: ''
   :unity_test_time: 0
 - :test: test_1AH_A_given_A_value_10H_and_location_1AH_5BH_expect_values_A_logicalOR_location_1CH
-  :line: 1572
+  :line: 1597
   :message: ''
   :unity_test_time: 0
 - :test: test_11H_hashFBH_given_location_11H_value_ACH_expect_hashFBH_logicalOR_location_11H
-  :line: 1590
+  :line: 1615
   :message: ''
   :unity_test_time: 0
 - :test: test_SJMP_70_expect_relative_address_jump_to_2003H
-  :line: 1608
+  :line: 1633
   :message: ''
   :unity_test_time: 0
 - :test: test_SJMP_minus60_expect_relative_address_jump_to_2003H
-  :line: 1621
+  :line: 1646
   :message: ''
   :unity_test_time: 0
 - :test: test_LJMP_1234H_expect_1234H_LJMP_to_location_23H
-  :line: 1634
+  :line: 1659
   :message: ''
   :unity_test_time: 0
 - :test: test_JZ_10_expect_not_JMP_when_acc_is_not_0
-  :line: 1647
+  :line: 1672
   :message: ''
   :unity_test_time: 0
 - :test: test_JZ_10_expect_JMP_when_acc_is_0
-  :line: 1662
+  :line: 1687
   :message: ''
   :unity_test_time: 0
 - :test: test_JNZ_40_expect_no_JMP_when_acc_is_not_zero
-  :line: 1677
+  :line: 1702
   :message: ''
   :unity_test_time: 0
 - :test: test_JNZ_40_expect_JMP_when_acc_is_not_zero
-  :line: 1692
+  :line: 1717
   :message: ''
   :unity_test_time: 0
 - :test: test_JNC_30_expect_no_JMP_when_carry_is_set
-  :line: 1707
+  :line: 1732
   :message: ''
   :unity_test_time: 0
 - :test: test_JNC_30_expect_JMP_when_carry_is_not_set
-  :line: 1722
+  :line: 1747
   :message: ''
   :unity_test_time: 0
 - :test: test_JNC_44_expect_JMP_when_carry_is_set
-  :line: 1737
+  :line: 1762
   :message: ''
   :unity_test_time: 0
 - :test: test_JNC_44_expect_not_JMP_when_carry_is_not_set
-  :line: 1752
+  :line: 1777
   :message: ''
   :unity_test_time: 0
 - :test: test_DA_A_given_A_value_34H_and_data_37H_expect_value_A_plus_data_37H_is_71H
-  :line: 1767
+  :line: 1792
   :message: ''
   :unity_test_time: 0
 - :test: test_DA_A_given_A_value_28H_and_data_29H_expect_value_A_plus_data_29H_is_57H
-  :line: 1791
+  :line: 1816
   :message: ''
   :unity_test_time: 0
 - :test: test_DA_A_given_A_value_44H_and_data_64H_expect_value_A_plus_data_64H_is_108H
-  :line: 1815
+  :line: 1840
   :message: ''
   :unity_test_time: 0
 :failures: []
 :ignores: []
 :counts:
-  :total: 91
-  :passed: 91
+  :total: 92
+  :passed: 92
   :failed: 0
   :ignored: 0
 :stdout: []
-:time: 0.022478200000477955
+:time: 0.02249100000335602

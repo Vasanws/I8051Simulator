@@ -24,6 +24,7 @@ struct Status {
 #define status   (*(Status*)&sfr[0xd0])
 #define B        sfr[0xf0]
 #define r(n)     ram[((psw >> 3) & 0x03) * 8 + (n)]
+#define xr(n)     xram[((psw >> 3) & 0x03) * 8 + (n)]
 #define DPH      sfr[0x83]
 #define DPL      sfr[0x82]
 
@@ -38,6 +39,7 @@ typedef void(*ExecuteInstruction)(void);
 
 void writeToMemory(int address, AccessMode mode, uint8_t data);
 uint8_t readFromMemory(int address, AccessMode mode);
+uint8_t readFromXternalMemory(int address, AccessMode mode);
 uint8_t sum(uint32_t val1, uint32_t val2);
 uint8_t substract(uint32_t val1, uint32_t val2);
 void handleOverFlow(uint32_t val1, uint32_t val2, uint32_t result);
@@ -57,6 +59,7 @@ void movAToAddr();
 void movDirToAddr();
 void movDataToAddr();
 void movDataTodptr();
+void movXAddrToA();
 void clrA();
 void incA();
 void incReg();
