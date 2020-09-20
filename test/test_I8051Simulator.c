@@ -511,7 +511,7 @@ void test_MOVX_A_addressR1_given_addressR1_value_76H_expect_value_addressR1_exte
   //run code under test
   executeInstruction();
   //code output test
-  TEST_ASSERT_EQUAL_HEX8(0x21, acc);
+  TEST_ASSERT_EQUAL_HEX8(0x76, acc);
   TEST_ASSERT_EQUAL(0x99, xr(1));
   TEST_ASSERT_EQUAL_PTR(0x0117 + 1, pc);
 }
@@ -1858,4 +1858,28 @@ void test_DA_A_given_A_value_44H_and_data_64H_expect_value_A_plus_data_64H_is_10
   TEST_ASSERT_EQUAL(0, status.AC);
   TEST_ASSERT_EQUAL(1, status.CY);
   TEST_ASSERT_EQUAL_PTR(0x5002 + 3, pc);
+}
+
+// DA A 
+void test_DA_A_given_A_value_49H_and_data_68H_expect_value_A_plus_data_68H_is_117H(void)
+{
+  //test setup fixture
+  uint8_t machineCode[] = {0x24,0x68,   // ADD A,#44H
+                           0xd4};       // DA A
+  //setup acc a value 
+  acc = 0x49;
+  //setup AC to 0 
+  status.AC = 1;
+  //setup CY to 0 
+  status.CY = 1;
+  //copy codeMemory
+  copyCodeToCodeMemory(machineCode, pc = 0x5003);
+  //run code under test 
+  executeInstruction();               // ADD A,#29H
+  executeInstruction();               // DA A
+  //code test output 
+  TEST_ASSERT_EQUAL_HEX8(0x117, acc);
+  TEST_ASSERT_EQUAL(1, status.AC);
+  TEST_ASSERT_EQUAL(1, status.CY);
+  TEST_ASSERT_EQUAL_PTR(0x5003 + 3, pc);
 }

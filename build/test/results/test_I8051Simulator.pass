@@ -107,7 +107,7 @@
   :line: 474
   :message: ''
   :unity_test_time: 0
-- :test: test_MOVX_A_addressR1
+- :test: test_MOVX_A_addressR1_given_addressR1_value_76H_expect_value_addressR1_external_RAM_mov_to_A
   :line: 495
   :message: ''
   :unity_test_time: 0
@@ -371,12 +371,16 @@
   :line: 1840
   :message: ''
   :unity_test_time: 0
+- :test: test_DA_A_given_A_value_49H_and_data_68H_expect_value_A_plus_data_68H_is_117H
+  :line: 1864
+  :message: ''
+  :unity_test_time: 0
 :failures: []
 :ignores: []
 :counts:
-  :total: 92
-  :passed: 92
+  :total: 93
+  :passed: 93
   :failed: 0
   :ignored: 0
 :stdout: []
-:time: 0.02249100000335602
+:time: 0.019671999994898215

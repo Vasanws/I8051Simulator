@@ -354,6 +354,7 @@ void movXAddrToA()
   pc += 1;
 }
 
+
 void clrA() 
 {
   uint8_t *codePtr = &codeMemory[pc];

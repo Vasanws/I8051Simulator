@@ -1252,7 +1252,7 @@ void test_MOV_DPTR_hash1234H_given_data_hash1234H_expect_data_mov_to_DPTR_DH_hol
 
 
 
-void test_MOVX_A_addressR1(void)
+void test_MOVX_A_addressR1_given_addressR1_value_76H_expect_value_addressR1_external_RAM_mov_to_A(void)
 
 {
 
@@ -1266,11 +1266,11 @@ void test_MOVX_A_addressR1(void)
 
 
 
-  xram[0x89] = 0x21;
+  xram[0x99] = 0x76;
 
-  ram[0x89] = 0;
+  ram[0x99] = 0;
 
-  sfr[0x89] = 0;
+  sfr[0x99] = 0;
 
 
 
@@ -1278,7 +1278,7 @@ void test_MOVX_A_addressR1(void)
 
 
 
-  xram[((sfr[0xd0] >> 3) & 0x03) * 8 + (1)] = 0x89;
+  xram[((sfr[0xd0] >> 3) & 0x03) * 8 + (1)] = 0x99;
 
 
 
@@ -1290,13 +1290,13 @@ void test_MOVX_A_addressR1(void)
 
 
 
-  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((0x21)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((0x76)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
 
  ((void *)0)
 
  ), (UNITY_UINT)(514), UNITY_DISPLAY_STYLE_HEX8);
 
-  UnityAssertEqualNumber((UNITY_INT)((0x89)), (UNITY_INT)((xram[((sfr[0xd0] >> 3) & 0x03) * 8 + (1)])), (
+  UnityAssertEqualNumber((UNITY_INT)((0x99)), (UNITY_INT)((xram[((sfr[0xd0] >> 3) & 0x03) * 8 + (1)])), (
 
  ((void *)0)
 
@@ -4639,5 +4639,69 @@ void test_DA_A_given_A_value_44H_and_data_64H_expect_value_A_plus_data_64H_is_10
  ((void *)0)
 
  ), (UNITY_UINT)(1860), UNITY_DISPLAY_STYLE_HEX64);
+
+}
+
+
+
+
+
+void test_DA_A_given_A_value_49H_and_data_68H_expect_value_A_plus_data_68H_is_117H(void)
+
+{
+
+
+
+  uint8_t machineCode[] = {0x24,0x68,
+
+                           0xd4};
+
+
+
+  sfr[0xe0] = 0x49;
+
+
+
+  (*(Status*)&sfr[0xd0]).AC = 1;
+
+
+
+  (*(Status*)&sfr[0xd0]).CY = 1;
+
+
+
+  do{ int i; unsigned char *dst = (unsigned char *)&codeMemory[pc = 0x5003]; for(i = 0; i < sizeof(machineCode); i++){ dst[i] = (machineCode)[i]; } }while(0);
+
+
+
+  executeInstruction();
+
+  executeInstruction();
+
+
+
+  UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((0x117)), (UNITY_INT)(UNITY_INT8 )((sfr[0xe0])), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(1881), UNITY_DISPLAY_STYLE_HEX8);
+
+  UnityAssertEqualNumber((UNITY_INT)((1)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).AC)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(1882), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT)((1)), (UNITY_INT)(((*(Status*)&sfr[0xd0]).CY)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(1883), UNITY_DISPLAY_STYLE_INT);
+
+  UnityAssertEqualNumber((UNITY_INT64)((0x5003 + 3)), (UNITY_INT64)((pc)), (
+
+ ((void *)0)
+
+ ), (UNITY_UINT)(1884), UNITY_DISPLAY_STYLE_HEX64);
 
 }
